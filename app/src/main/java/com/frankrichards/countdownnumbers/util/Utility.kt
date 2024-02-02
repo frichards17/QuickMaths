@@ -3,6 +3,8 @@ package com.frankrichards.countdownnumbers.util
 import android.util.Log
 import com.frankrichards.countdownnumbers.model.Operation
 import com.frankrichards.countdownnumbers.model.SimpleCalculation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.math.abs
 
 object Utility {
@@ -34,7 +36,8 @@ object Utility {
         return (this.slice(0..<index) + this.slice(index + 1..this.lastIndex)).toTypedArray()
     }
 
-    fun getCombinations(nums: IntArray): Array<SimpleCalculation> {
+    // Get all combinations of nums for non sequential solving
+    private fun getCombinations(nums: IntArray): Array<SimpleCalculation> {
         var combos = arrayOf<SimpleCalculation>()
         for (i in nums.indices) {
             val n1 = nums[i]
@@ -49,14 +52,14 @@ object Utility {
         return combos
     }
 
-    private fun solveForNum(
+    // Get best solution starting with a given number
+    private suspend fun solveForNum(
         target: Int,
         currentNum: Int,
         otherNums: IntArray,
         currentSolution: Array<SimpleCalculation> = arrayOf(),
         bestSolution: Array<SimpleCalculation> = arrayOf()
     ): Array<SimpleCalculation> {
-        Log.v("SolveTest", "Recurred - solution size ${currentSolution.size}")
 
         var best = bestSolution
         val othersCombined = getCombinations(otherNums)
@@ -65,12 +68,12 @@ object Utility {
         if(
             best.isNotEmpty() &&
             best.last().ans == target
-            && best.size <= currentSolution.size
+            && best.size <= currentSolution.size + 1
             ){
-//            Log.v("SolveTestShort", "Current solution shorter - skipping")
             return best
         }
 
+        // For each other num, try all sequential solutions (i.e. 1, 2, 3, 4 -> 1 + 2 + 3 + 4)
         for (i in otherNums.indices) {
             val num = otherNums[i]
             val others = otherNums.remove(i)
@@ -80,8 +83,6 @@ object Utility {
                     // If target found - return
                     if (ans == target) {
                         best = currentSolution + newCalc
-                        Log.v("SolveTestShort", "Answer found: ${best.joinToString { it.toString() }}")
-                        Log.v("SolveTestShort", "Answer length: ${best.size}")
                     }
 
                     // If target closer - update best answer
@@ -109,11 +110,12 @@ object Utility {
         if(
             best.isNotEmpty() &&
             best.last().ans == target
-            && best.size <= currentSolution.size + 1
+            && best.size <= currentSolution.size + 2
         ){
             return best
         }
 
+        // For each other num, try all non-sequential solutions (i.e. 1, 2, 3, 4 -> (1 x 2) + (3 x 4))
         for(i in othersCombined.indices) {
             val numCalc = othersCombined[i]
             val others = arrayListOf<Int>()
@@ -127,8 +129,6 @@ object Utility {
                     // If target found - return
                     if (ans == target) {
                         best = currentSolution + numCalc + newCalc
-                        Log.v("SolveTestShort", "Answer found: ${best.joinToString { it.toString() }}")
-                        Log.v("SolveTestShort", "Answer length: ${best.size}")
                     }
 
                     // If target closer - update best answer
@@ -153,11 +153,10 @@ object Utility {
         return best
     }
 
-    suspend fun solve(target: Int, nums: IntArray): Array<SimpleCalculation> {
-        var bestAnswer = 0
+    // Solve for target with given nums
+    suspend fun solve(target: Int, nums: IntArray): Array<SimpleCalculation> = withContext(
+        Dispatchers.Default) {
         var bestSolution = arrayOf<SimpleCalculation>()
-
-        Log.v("SolveTest", "Starting solve")
 
         for (i in nums.indices) {
             val num = nums[i]
@@ -170,51 +169,7 @@ object Utility {
             )
         }
 
-        return bestSolution
+        bestSolution
     }
-
-//    fun solve(target: Int, nums: IntArray): Array<SimpleCalculation> {
-//        val operations =
-//            arrayOf(Operation.Add, Operation.Subtract, Operation.Multiply, Operation.Divide)
-//
-//        var bestAnswer = 0
-//        var bestSolution = arrayOf<SimpleCalculation>()
-//
-//        Log.v("SolveTest", "Starting solve")
-//        for (i in nums.indices) {
-//            val others = nums.slice(0..<i) + nums.slice(i+1..nums.lastIndex)
-//            var n1 = nums[i]
-//            for (op in operations) {
-//                var solution = arrayOf<SimpleCalculation>()
-//                n1 = nums[i]
-//
-//                for (n2 in others) {
-//                    op.calculate(n1, n2)?.let {ans ->
-//                        solution += SimpleCalculation(
-//                            n1,
-//                            op,
-//                            n2,
-//                            ans
-//                        )
-//                        val s = solution.joinToString { "${it.n1} ${it.op.label} ${it.n2} = ${it.ans}, " }
-//                        if(ans == target){
-//                            return solution
-//                        }else if(
-//                            abs(target-ans) < abs(target-bestAnswer)
-//                        ){
-//                            bestAnswer = ans
-//                            bestSolution = solution
-//                        }
-//                        n1 = ans
-//
-//                    }
-//
-//                }
-//            }
-//
-//        }
-//        return bestSolution
-//
-//    }
 
 }

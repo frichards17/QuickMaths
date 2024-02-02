@@ -53,7 +53,7 @@ fun MainMenu(
             CustomButton(
                 text = "SETTINGS",
                 onClick = {
-                    viewModel.getSolution()
+                    navigateTo(NavigationItem.Settings.route)
                 }
             )
 

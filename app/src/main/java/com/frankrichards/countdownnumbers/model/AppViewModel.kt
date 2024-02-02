@@ -10,7 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.frankrichards.countdownnumbers.util.Utility
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 class AppViewModel : ViewModel() {
@@ -35,7 +37,7 @@ class AppViewModel : ViewModel() {
     var answerCorrect by mutableStateOf(false)
 
     // Result
-    var solvable = false
+    var bestSolution by mutableStateOf(arrayOf<SimpleCalculation>())
 
     // GAME PROGRESS
 
@@ -43,8 +45,7 @@ class AppViewModel : ViewModel() {
 
         calculationNumbers = getAvailableNumbers(selectedNumbers)
         this.selectedNumbers = selectedNumbers
-//        this.targetNum = targetNum
-        this.targetNum = 101
+        this.targetNum = targetNum
         gameProgress = GameProgress.TargetGen
 
     }
@@ -94,11 +95,10 @@ class AppViewModel : ViewModel() {
     }
 
     fun controlButtonClick(op: Operation?) {
-        Log.v("tag", "${op?.label} pressed")
         if (op != null) {
             if (num1 != null && num2 == null) {
                 operation = op
-                calculationErrMsg =""
+                calculationErrMsg = ""
             }
         } else {
             if (
@@ -117,7 +117,7 @@ class AppViewModel : ViewModel() {
         }
     }
 
-    fun reset(){
+    fun reset() {
         num2 = null
         operation = null
         num1 = null
@@ -125,23 +125,23 @@ class AppViewModel : ViewModel() {
         calculationNumbers = getAvailableNumbers(selectedNumbers)
     }
 
-    fun back(){
+    fun back() {
         calculationErrMsg = ""
-        if(num2 != null){
+        if (num2 != null) {
             calculationNumbers[num2!!.index].isAvailable = true
             num2 = null
-        }else if(operation != null){
+        } else if (operation != null) {
             operation = null
-        }else if(num1 != null){
+        } else if (num1 != null) {
             calculationNumbers[num1!!.index].isAvailable = true
             num1 = null
-        }else if(calculations.size > 1){
+        } else if (calculations.size > 1) {
             val c = calculations.last()
             calculations = calculations.slice(0..<calculations.lastIndex).toTypedArray()
             num1 = c.number1
             operation = c.operation
             num2 = c.number2
-        }else if(calculations.isNotEmpty()){
+        } else if (calculations.isNotEmpty()) {
             val c = calculations.last()
             calculations = arrayOf()
             num1 = c.number1
@@ -164,50 +164,42 @@ class AppViewModel : ViewModel() {
         operation = null
         num2 = null
 
-        if(answer == targetNum){
+        if (answer == targetNum) {
             checkFinalAnswer()
         }
     }
 
-    private fun checkFinalAnswer(){
+    private fun checkFinalAnswer() {
         var isIncorrect = false
-        for(c in calculations){
-            if(c.solution != c.selectedSolution){
+        for (c in calculations) {
+            if (c.solution != c.selectedSolution) {
                 isIncorrect = true
                 break
             }
         }
 
-        if(isIncorrect){
+        if (isIncorrect) {
             calculationErrMsg = "One of your calculations is wrong!"
-        }else{
+        } else {
             answerCorrect = true
             goToResult()
         }
     }
 
-    fun getSolution(){
+    fun getSolution() {
         viewModelScope.launch {
-            val sol = async {
-                Utility.solve(
-                    189,
-                    intArrayOf(9, 25, 5, 8, 8, 2)
-                )
-            }
-
-            Log.v("SolveTestShort", "Answer: $sol")
-
+            bestSolution = Utility.solve(
+                189,
+                intArrayOf(9, 25, 5, 8, 8, 2)
+            )
         }
-
     }
 
 }
 
-fun Array<CalculationNumber>.remove(n: CalculationNumber): Array<CalculationNumber> {
-    Log.v("Remove", "Remove called")
-    Log.v("Remove", "Array: ${this.joinToString(" ")}")
-    Log.v("Remove", "Remove: $n")
-    var arr = arrayOf<CalculationNumber>()
+// Remove given number from array
+inline fun <reified T> Array<T>.remove(n: T): Array<T> {
+    var arr = arrayOf<T>()
     for (i in indices) {
         if (this[i] == n) {
             arr += this.slice(i + 1..<this.size)
@@ -216,7 +208,6 @@ fun Array<CalculationNumber>.remove(n: CalculationNumber): Array<CalculationNumb
             arr += this[i]
         }
     }
-    Log.v("Remove", "Array: ${arr.joinToString(" ")}")
     return arr
 }
 
