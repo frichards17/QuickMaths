@@ -43,7 +43,7 @@ fun Result(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    LabelText("Your solution:")
+                    LabelText("You were :")
 
                     LabelText("Best solution:")
                 }

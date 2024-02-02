@@ -1,19 +1,17 @@
 package com.frankrichards.countdownnumbers.model
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.frankrichards.countdownnumbers.util.Utility
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.job
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AppViewModel : ViewModel() {
 
@@ -26,6 +24,17 @@ class AppViewModel : ViewModel() {
     var displayedTargetNum by mutableIntStateOf(0)
 
     // Gameplay
+    var countdownJob = viewModelScope.launch(start = CoroutineStart.LAZY) {
+        withContext(Dispatchers.Default){
+            while(timeLeft > 0) {
+                delay(1000)
+                timeLeft--
+            }
+            checkAnswer()
+            goToResult()
+        }
+    }
+
     var num1 by mutableStateOf<CalculationNumber?>(null)
     var num2 by mutableStateOf<CalculationNumber?>(null)
     var operation by mutableStateOf<Operation?>(null)
@@ -34,13 +43,25 @@ class AppViewModel : ViewModel() {
     var calculations by mutableStateOf(arrayOf<Calculation>())
     var calculationNumbers by mutableStateOf(arrayOf<CalculationNumber>())
     var calculationErrMsg by mutableStateOf("")
-    var answerCorrect by mutableStateOf(false)
+    var timeLeft by mutableStateOf(30)
+    var showQuitDialog by mutableStateOf(false)
 
     // Result
+    var answerValid by mutableStateOf(false)
+    var answerCorrect by mutableStateOf(false)
     var bestSolution by mutableStateOf(arrayOf<SimpleCalculation>())
 
-    // GAME PROGRESS
+    fun resetGame(){
+        gameProgress = GameProgress.CardSelect
+        targetNum = 0
+        displayedTargetNum = 0
+        selectedIndices = intArrayOf()
+        selectedNumbers = intArrayOf()
+        reset()
+    }
 
+
+    // GAME PROGRESS
     fun goToTargetGen(selectedNumbers: IntArray, targetNum: Int) {
 
         calculationNumbers = getAvailableNumbers(selectedNumbers)
@@ -63,9 +84,21 @@ class AppViewModel : ViewModel() {
 
     fun goToPlay() {
         gameProgress = GameProgress.Countdown
+        startCountdown()
     }
 
-    fun goToResult() {
+    private fun startCountdown(){
+        countdownJob.start()
+    }
+
+    fun quitGame(){
+        showQuitDialog = false
+        countdownJob.cancel()
+        resetGame()
+    }
+
+    private fun goToResult() {
+        countdownJob.cancel()
         gameProgress = GameProgress.Result
     }
 
@@ -165,24 +198,25 @@ class AppViewModel : ViewModel() {
         num2 = null
 
         if (answer == targetNum) {
-            checkFinalAnswer()
+            checkAnswer()
+
+            if (answerValid) {
+                goToResult()
+            } else {
+                calculationErrMsg = "One of your calculations is wrong!"
+            }
         }
     }
 
-    private fun checkFinalAnswer() {
-        var isIncorrect = false
+    private fun checkAnswer() {
+        answerCorrect = calculations.last().selectedSolution == targetNum
+
+        answerValid = true
         for (c in calculations) {
             if (c.solution != c.selectedSolution) {
-                isIncorrect = true
+                answerValid = false
                 break
             }
-        }
-
-        if (isIncorrect) {
-            calculationErrMsg = "One of your calculations is wrong!"
-        } else {
-            answerCorrect = true
-            goToResult()
         }
     }
 

@@ -1,6 +1,5 @@
 package com.frankrichards.countdownnumbers.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,8 +18,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frankrichards.countdownnumbers.components.CustomButton
 import com.frankrichards.countdownnumbers.model.AppViewModel
 import com.frankrichards.countdownnumbers.nav.NavigationItem
-import com.frankrichards.countdownnumbers.util.Utility
-import kotlinx.coroutines.launch
 
 @Composable
 fun MainMenu(
@@ -47,6 +44,7 @@ fun MainMenu(
             CustomButton(
                 text = "PLAY",
                 onClick = {
+                    viewModel.resetGame()
                     navigateTo(NavigationItem.Gameplay.route)
                 }
             )

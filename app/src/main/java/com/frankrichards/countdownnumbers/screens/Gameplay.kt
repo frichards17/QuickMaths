@@ -1,6 +1,8 @@
 package com.frankrichards.countdownnumbers.screens
 
 import android.content.res.Configuration
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.animateIntAsState
@@ -34,7 +36,9 @@ import com.frankrichards.countdownnumbers.model.GameProgress
 import com.frankrichards.countdownnumbers.components.CustomButton
 import com.frankrichards.countdownnumbers.components.GameplayComponent
 import com.frankrichards.countdownnumbers.components.NumberCardLayout
+import com.frankrichards.countdownnumbers.components.QuitDialog
 import com.frankrichards.countdownnumbers.components.TargetNum
+import com.frankrichards.countdownnumbers.nav.NavigationItem
 import com.frankrichards.countdownnumbers.ui.theme.CountdownNumbersTheme
 import com.frankrichards.countdownnumbers.util.Utility
 import kotlinx.coroutines.delay
@@ -46,6 +50,23 @@ fun Gameplay(
     viewModel: AppViewModel,
     nums: IntArray = Utility.getCardNumbers()
 ) {
+
+    BackHandler {
+        viewModel.showQuitDialog = true
+    }
+
+    if(viewModel.showQuitDialog){
+        QuitDialog(
+            quit = {
+                viewModel.quitGame()
+                navigateTo(NavigationItem.Menu.route)
+            },
+            dismiss = {
+                viewModel.showQuitDialog = false
+            }
+        )
+    }
+
     val scope = rememberCoroutineScope()
 
     val animatedDigit1 by animateIntAsState(
@@ -75,6 +96,13 @@ fun Gameplay(
 
     val getRandom: () -> Int = {
         (101..999).random()
+    }
+
+    LaunchedEffect(viewModel.gameProgress) {
+        if(viewModel.gameProgress == GameProgress.Result){
+            Log.v("Result", "Going to result")
+            navigateTo(NavigationItem.Result.route)
+        }
     }
 
     Surface(
@@ -175,23 +203,26 @@ fun Gameplay(
                     }
 
                     GameProgress.Countdown -> {
-                        GameplayComponent(
-                            viewModel.calculationNumbers,
-                            numberClick = {
-                                viewModel.numberClick(it)
-                            },
-                            operationClick = {
-                                viewModel.controlButtonClick(it)
-                            },
-                            calculations = viewModel.calculations,
-                            currentNum1 = viewModel.num1?.value,
-                            currentOp = viewModel.operation,
-                            currentNum2 = viewModel.num2?.value,
-                            calcError = viewModel.calcError,
-                            back = {viewModel.back()},
-                            reset = {viewModel.reset()},
-                            errorMsg = viewModel.calculationErrMsg
-                        )
+                        Column {
+                            Text("Time left: ${viewModel.timeLeft} seconds")
+                            GameplayComponent(
+                                viewModel.calculationNumbers,
+                                numberClick = {
+                                    viewModel.numberClick(it)
+                                },
+                                operationClick = {
+                                    viewModel.controlButtonClick(it)
+                                },
+                                calculations = viewModel.calculations,
+                                currentNum1 = viewModel.num1?.value,
+                                currentOp = viewModel.operation,
+                                currentNum2 = viewModel.num2?.value,
+                                calcError = viewModel.calcError,
+                                back = { viewModel.back() },
+                                reset = { viewModel.reset() },
+                                errorMsg = viewModel.calculationErrMsg
+                            )
+                        }
 
                         if (!viewModel.calcError && viewModel.currentCalculation != null) {
                             CalculationDialog(
@@ -200,10 +231,6 @@ fun Gameplay(
                                     viewModel.calculationAnswer(it)
                                 }
                             )
-                        }
-
-                        if(viewModel.answerCorrect){
-
                         }
                     }
 

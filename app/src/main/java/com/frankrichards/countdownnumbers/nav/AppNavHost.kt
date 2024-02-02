@@ -16,6 +16,7 @@ fun AppNavHost(
     startDestination: String = NavigationItem.Menu.route,
     viewModel: AppViewModel = viewModel()
 ) {
+
     NavHost(
         modifier = modifier,
         navController = navController,
@@ -29,7 +30,7 @@ fun AppNavHost(
         }
 
         composable(NavigationItem.Menu.route) {
-            MainMenu(navigateTo)
+            MainMenu(navigateTo, viewModel)
         }
         composable(NavigationItem.Gameplay.route) {
             Gameplay(navigateTo, viewModel)
