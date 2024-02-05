@@ -1,9 +1,5 @@
 package com.frankrichards.countdownnumbers.screens
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +19,6 @@ import com.frankrichards.countdownnumbers.components.Banner
 import com.frankrichards.countdownnumbers.components.CustomButton
 import com.frankrichards.countdownnumbers.components.LabelText
 import com.frankrichards.countdownnumbers.model.AppViewModel
-import com.frankrichards.countdownnumbers.model.GameProgress
 import com.frankrichards.countdownnumbers.nav.NavigationItem
 import com.frankrichards.countdownnumbers.ui.theme.CountdownNumbersTheme
 import com.frankrichards.countdownnumbers.ui.theme.calculation
@@ -60,81 +55,70 @@ fun Result(
                     .fillMaxWidth()
                     .padding(16.dp)
             )
-            AnimatedContent(
-                targetState = viewModel.gameProgress,
-                transitionSpec = {
-                    fadeIn() togetherWith fadeOut()
-                },
-                label = ""
-            ) { progress ->
-                if (progress == GameProgress.GeneratingBest) {
-                    LabelText(
-                        "Generating best solution...",
-                        align = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                } else {
-                    if (viewModel.answerCorrect) {
 
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth()
-                        ) {
-                            LabelText("Your correct answer:")
 
-                            for (c in viewModel.calculations) {
-                                Text(
-                                    "${c.number1.value} ${c.operation.label} ${c.number2.value} = ${c.selectedSolution}",
-                                    style = MaterialTheme.typography.calculation,
-                                    color = if (c.solution == c.selectedSolution) {
-                                        MaterialTheme.colorScheme.onSurface
-                                    } else {
-                                        MaterialTheme.colorScheme.error
-                                    }
-                                )
-                            }
-                        }
-                    } else {
+            if (viewModel.answerCorrect) {
 
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth()
-                        ) {
-                            if (viewModel.answerValid) {
-                                LabelText("You were ${viewModel.diffFromCorrect} away from a correct answer:")
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                ) {
+                    LabelText("Your correct answer:")
+
+                    for (c in viewModel.calculations) {
+                        Text(
+                            "${c.number1.value} ${c.operation.label} ${c.number2.value} = ${c.selectedSolution}",
+                            style = MaterialTheme.typography.calculation,
+                            color = if (c.solution == c.selectedSolution) {
+                                MaterialTheme.colorScheme.onSurface
                             } else {
-                                LabelText("Your answer was invalid:")
+                                MaterialTheme.colorScheme.error
                             }
-
-                            for (c in viewModel.calculations) {
-                                Text(
-                                    "${c.number1.value} ${c.operation.label} ${c.number2.value} = ${c.selectedSolution}",
-                                    style = MaterialTheme.typography.calculation,
-                                    color = if (c.solution == c.selectedSolution) {
-                                        MaterialTheme.colorScheme.onSurface
-                                    } else {
-                                        MaterialTheme.colorScheme.error
-                                    }
-                                )
-                            }
-
-                            LabelText("Best solution:")
-                            for (c in viewModel.bestSolution) {
-                                Text(
-                                    "${c.n1} ${c.op.label} ${c.n2} = ${c.ans}",
-                                    style = MaterialTheme.typography.calculation
-                                )
-                            }
-                        }
-
-
+                        )
                     }
                 }
+            } else {
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                ) {
+                    if (viewModel.answerValid) {
+                        LabelText("You were ${viewModel.diffFromCorrect} away from a correct answer:")
+                    } else {
+                        LabelText("Your answer was invalid:")
+                    }
+
+                    for (c in viewModel.calculations) {
+                        Text(
+                            "${c.number1.value} ${c.operation.label} ${c.number2.value} = ${c.selectedSolution}",
+                            style = MaterialTheme.typography.calculation,
+                            color = if (c.solution == c.selectedSolution) {
+                                MaterialTheme.colorScheme.onSurface
+                            } else {
+                                MaterialTheme.colorScheme.error
+                            }
+                        )
+                    }
+
+                    LabelText("Best solution:")
+                    for (c in viewModel.bestSolution) {
+                        Text(
+                            "${c.n1} ${c.op.label} ${c.n2} = ${c.ans}",
+                            style = MaterialTheme.typography.calculation
+                        )
+                    }
+
+                }
+
+
             }
+
+
             CustomButton(
                 text = "PLAY AGAIN",
                 onClick = {
@@ -160,7 +144,6 @@ fun Result_Preview() {
 
     val v: AppViewModel = viewModel()
     v.answerCorrect = false
-//    v.gameProgress = GameProgress.GeneratingBest
 
     CountdownNumbersTheme {
         Result({}, v)

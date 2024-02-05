@@ -55,7 +55,7 @@ fun Gameplay(
         viewModel.showQuitDialog = true
     }
 
-    if(viewModel.showQuitDialog){
+    if (viewModel.showQuitDialog) {
         QuitDialog(
             quit = {
                 viewModel.quitGame()
@@ -98,9 +98,11 @@ fun Gameplay(
         (101..999).random()
     }
 
-    LaunchedEffect(viewModel.gameProgress) {
-        if(viewModel.gameProgress == GameProgress.Result){
-            Log.v("Result", "Going to result")
+    LaunchedEffect(viewModel.gameProgress, viewModel.bestSolution) {
+        if (viewModel.gameProgress == GameProgress.Result
+            && (viewModel.bestSolution.isNotEmpty() ||
+                    viewModel.answerCorrect)
+        ) {
             navigateTo(NavigationItem.Result.route)
         }
     }
@@ -139,7 +141,7 @@ fun Gameplay(
                                     if (
                                         !viewModel.selectedIndices.contains(it)
                                         && viewModel.selectedIndices.size < 6
-                                        ) {
+                                    ) {
                                         viewModel.selectedIndices += it
                                     }
                                 },
@@ -159,7 +161,10 @@ fun Gameplay(
                                     }.toIntArray()
                                     viewModel.displayedTargetNum = getRandom()
 
-                                    viewModel.goToTargetGen(selectedNums, viewModel.displayedTargetNum)
+                                    viewModel.goToTargetGen(
+                                        selectedNums,
+                                        viewModel.displayedTargetNum
+                                    )
 
                                     scope.launch {
                                         delay(5000)
@@ -230,6 +235,25 @@ fun Gameplay(
                                 onAnswer = {
                                     viewModel.calculationAnswer(it)
                                 }
+                            )
+                        }
+                    }
+
+                    GameProgress.GameOver -> {
+                        Column {
+                            Text("Game Over!")
+                            GameplayComponent(
+                                viewModel.calculationNumbers,
+                                numberClick = {},
+                                operationClick = {},
+                                calculations = viewModel.calculations,
+                                currentNum1 = null,
+                                currentOp = null,
+                                currentNum2 = null,
+                                calcError = false,
+                                back = {},
+                                reset = {},
+                                errorMsg = viewModel.calculationErrMsg
                             )
                         }
                     }

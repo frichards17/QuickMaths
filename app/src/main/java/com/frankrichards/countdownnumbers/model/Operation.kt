@@ -45,7 +45,7 @@ interface Operation {
     object Divide: Operation {
         override fun calculate(x: Int, y: Int): Int? {
 
-            return if(x % y == 0){
+            return if(x.mod(y) == 0){
                 x / y
             } else {
                 Log.v("Calculate", "Divide Null")

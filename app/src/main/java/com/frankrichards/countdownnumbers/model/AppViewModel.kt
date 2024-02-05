@@ -14,10 +14,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
+import kotlin.time.Duration.Companion.seconds
 
 class AppViewModel : ViewModel() {
 
-    var selectedNumbers by mutableStateOf(intArrayOf())
+    private var selectedNumbers by mutableStateOf(intArrayOf())
     var targetNum by mutableIntStateOf(0)
     var gameProgress by mutableStateOf(GameProgress.CardSelect)
 
@@ -27,8 +28,8 @@ class AppViewModel : ViewModel() {
 
     // Gameplay
     private var countdownBlock: suspend CoroutineScope.() -> Unit = {
-        withContext(Dispatchers.Default){
-            while(timeLeft > 0) {
+        withContext(Dispatchers.Default) {
+            while (timeLeft > 0) {
                 delay(1000)
                 timeLeft--
             }
@@ -59,7 +60,7 @@ class AppViewModel : ViewModel() {
     var diffFromCorrect by mutableIntStateOf(0)
     var bestSolution by mutableStateOf(arrayOf<SimpleCalculation>())
 
-    fun resetGame(){
+    fun resetGame() {
         gameProgress = GameProgress.CardSelect
         targetNum = 0
         displayedTargetNum = 0
@@ -71,6 +72,7 @@ class AppViewModel : ViewModel() {
             start = CoroutineStart.LAZY,
             block = countdownBlock
         )
+        showQuitDialog = false
         reset()
     }
 
@@ -100,11 +102,11 @@ class AppViewModel : ViewModel() {
         startCountdown()
     }
 
-    private fun startCountdown(){
+    private fun startCountdown() {
         countdownJob.start()
     }
 
-    fun quitGame(){
+    fun quitGame() {
         showQuitDialog = false
         countdownJob.cancel()
         resetGame()
@@ -112,25 +114,30 @@ class AppViewModel : ViewModel() {
 
     private fun goToResult() {
         countdownJob.cancel()
-        if(!answerCorrect){
+        currentCalculation = null
+        gameProgress = GameProgress.GameOver
+        getSolution()
+        if (!answerCorrect) {
             var dif = targetNum
-            for(c in calculationNumbers){
-                if(c.isAvailable){
+            for (c in calculationNumbers) {
+                if (c.isAvailable) {
                     val n = abs(
                         targetNum -
-                        c.value
+                                c.value
                     )
-                    if(n < dif){
+                    if (n < dif) {
                         dif = n
                     }
                 }
             }
             diffFromCorrect = dif
-            gameProgress = GameProgress.GeneratingBest
-            getSolution()
-        }else {
-            gameProgress = GameProgress.Result
         }
+        viewModelScope.launch {
+            delay(5.seconds)
+            gameProgress = GameProgress.Result
+
+        }
+
     }
 
     // CONTROLS
@@ -185,6 +192,7 @@ class AppViewModel : ViewModel() {
         num2 = null
         operation = null
         num1 = null
+        calcError = false
         calculations = arrayOf()
         calculationNumbers = getAvailableNumbers(selectedNumbers)
     }
@@ -251,7 +259,7 @@ class AppViewModel : ViewModel() {
         }
     }
 
-    fun getSolution() {
+    private fun getSolution() {
         viewModelScope.launch {
             bestSolution = Utility.solve(
                 targetNum,
@@ -263,7 +271,7 @@ class AppViewModel : ViewModel() {
 
 }
 
-// Remove given number from array
+// Remove given element from array
 inline fun <reified T> Array<T>.remove(n: T): Array<T> {
     var arr = arrayOf<T>()
     for (i in indices) {
@@ -281,6 +289,6 @@ enum class GameProgress {
     CardSelect,
     TargetGen,
     Countdown,
-    GeneratingBest,
+    GameOver,
     Result
 }
