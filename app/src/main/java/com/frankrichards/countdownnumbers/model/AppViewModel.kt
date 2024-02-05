@@ -7,11 +7,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.frankrichards.countdownnumbers.util.Utility
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.abs
 
 class AppViewModel : ViewModel() {
 
@@ -24,7 +26,7 @@ class AppViewModel : ViewModel() {
     var displayedTargetNum by mutableIntStateOf(0)
 
     // Gameplay
-    var countdownJob = viewModelScope.launch(start = CoroutineStart.LAZY) {
+    private var countdownBlock: suspend CoroutineScope.() -> Unit = {
         withContext(Dispatchers.Default){
             while(timeLeft > 0) {
                 delay(1000)
@@ -34,6 +36,11 @@ class AppViewModel : ViewModel() {
             goToResult()
         }
     }
+
+    private var countdownJob = viewModelScope.launch(
+        start = CoroutineStart.LAZY,
+        block = countdownBlock
+    )
 
     var num1 by mutableStateOf<CalculationNumber?>(null)
     var num2 by mutableStateOf<CalculationNumber?>(null)
@@ -49,6 +56,7 @@ class AppViewModel : ViewModel() {
     // Result
     var answerValid by mutableStateOf(false)
     var answerCorrect by mutableStateOf(false)
+    var diffFromCorrect by mutableIntStateOf(0)
     var bestSolution by mutableStateOf(arrayOf<SimpleCalculation>())
 
     fun resetGame(){
@@ -57,9 +65,14 @@ class AppViewModel : ViewModel() {
         displayedTargetNum = 0
         selectedIndices = intArrayOf()
         selectedNumbers = intArrayOf()
+        bestSolution = arrayOf()
+        timeLeft = 30
+        countdownJob = viewModelScope.launch(
+            start = CoroutineStart.LAZY,
+            block = countdownBlock
+        )
         reset()
     }
-
 
     // GAME PROGRESS
     fun goToTargetGen(selectedNumbers: IntArray, targetNum: Int) {
@@ -99,7 +112,25 @@ class AppViewModel : ViewModel() {
 
     private fun goToResult() {
         countdownJob.cancel()
-        gameProgress = GameProgress.Result
+        if(!answerCorrect){
+            var dif = targetNum
+            for(c in calculationNumbers){
+                if(c.isAvailable){
+                    val n = abs(
+                        targetNum -
+                        c.value
+                    )
+                    if(n < dif){
+                        dif = n
+                    }
+                }
+            }
+            diffFromCorrect = dif
+            gameProgress = GameProgress.GeneratingBest
+            getSolution()
+        }else {
+            gameProgress = GameProgress.Result
+        }
     }
 
     // CONTROLS
@@ -223,9 +254,10 @@ class AppViewModel : ViewModel() {
     fun getSolution() {
         viewModelScope.launch {
             bestSolution = Utility.solve(
-                189,
-                intArrayOf(9, 25, 5, 8, 8, 2)
+                targetNum,
+                selectedNumbers
             )
+            gameProgress = GameProgress.Result
         }
     }
 
@@ -249,5 +281,6 @@ enum class GameProgress {
     CardSelect,
     TargetGen,
     Countdown,
+    GeneratingBest,
     Result
 }

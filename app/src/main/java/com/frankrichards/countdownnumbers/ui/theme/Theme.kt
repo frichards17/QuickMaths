@@ -33,7 +33,8 @@ private val LightColorScheme = lightColorScheme(
     background = LightBackground,
     surface = LightSurface,
     error = Error,
-    onError = onError
+    onError = onError,
+
 
 
     /* Other default colors to override
@@ -50,6 +51,16 @@ private val LightColorScheme = lightColorScheme(
 val ColorScheme.surfaceBorder: Color
     get() {
         return LightSurfaceBorder
+    }
+
+val ColorScheme.positive: Color
+    get() {
+        return Positive
+    }
+
+val ColorScheme.onPositive: Color
+    get() {
+        return OnPositive
     }
 
 @Composable

@@ -47,3 +47,11 @@ val Typography.error: TextStyle
         fontSize = 18.sp,
         color = Error
     )
+
+val Typography.calculation: TextStyle
+    get() = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
+    )
+

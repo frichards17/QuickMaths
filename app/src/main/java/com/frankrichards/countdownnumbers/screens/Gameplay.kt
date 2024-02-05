@@ -125,7 +125,7 @@ fun Gameplay(
                 transitionSpec = {
                     fadeIn() togetherWith fadeOut()
                 },
-                label = ""
+                label = "Main Gameplay"
             ) { progress ->
                 when (progress) {
                     GameProgress.CardSelect -> {
