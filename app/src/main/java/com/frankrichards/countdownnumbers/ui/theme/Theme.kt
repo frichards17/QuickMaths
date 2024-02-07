@@ -16,26 +16,29 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import java.time.OffsetTime
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80,
-    background = DarkBackground,
-    surface = DarkSurface
+    primary = DarkBlue,
+    secondary = LightBlue,
+    tertiary = OffYellow,
+    background = Black,
+    onBackground = White,
+    surface = OffBlack,
+    error = Red,
+    onError = Pink
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = LightPrimary,
-    secondary = LightSecondary,
-    tertiary = LightTertiary,
-    onSecondary = LightPrimary,
-    background = LightBackground,
-    surface = LightSurface,
-    error = Error,
-    onError = onError,
-
-
+    primary = LightBlue,
+    secondary = DarkBlue,
+    tertiary = OffYellow,
+    onSecondary = White,
+    background = White,
+    onBackground = Black,
+    surface = OffWhite,
+    error = Red,
+    onError = Pink,
 
     /* Other default colors to override
 
@@ -50,18 +53,25 @@ private val LightColorScheme = lightColorScheme(
 
 val ColorScheme.surfaceBorder: Color
     get() {
-        return LightSurfaceBorder
+        return Grey
     }
 
 val ColorScheme.positive: Color
     get() {
-        return Positive
+        return Green
     }
 
 val ColorScheme.onPositive: Color
     get() {
-        return OnPositive
+        return LightGreen
     }
+
+val ColorScheme.primaryVariant: Color
+    get(){
+        return VariantBlue
+    }
+
+
 
 @Composable
 fun CountdownNumbersTheme(

@@ -24,6 +24,11 @@ val Typography = Typography(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 18.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp
     )
 )
 
@@ -45,7 +50,7 @@ val Typography.error: TextStyle
     get() = TextStyle(
         fontFamily = FontFamily.Default,
         fontSize = 18.sp,
-        color = Error
+        color = Red
     )
 
 val Typography.calculation: TextStyle

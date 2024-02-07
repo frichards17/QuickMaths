@@ -1,6 +1,8 @@
 package com.frankrichards.countdownnumbers.util
 
 import android.util.Log
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.frankrichards.countdownnumbers.model.Operation
 import com.frankrichards.countdownnumbers.model.SimpleCalculation
 import kotlinx.coroutines.Dispatchers
@@ -11,6 +13,53 @@ object Utility {
 
     private val operations =
         arrayOf(Operation.Add, Operation.Subtract, Operation.Multiply, Operation.Divide)
+
+    fun getRandomCalculations(n: Int): Array<SimpleCalculation> {
+        var calcs = arrayOf<SimpleCalculation>()
+        for(i in 1..n){
+            val op = operations.random()
+            var num1 = 0
+            var num2 = 0
+            var ans = 0
+            when(op){
+                Operation.Divide -> {
+                    ans = (2..10).random()
+                    num2 = (2..100).random()
+                    num1 = ans * num2
+                }
+                Operation.Subtract -> {
+                    val x = (0..100).random()
+                    val y = (0..100).random()
+                    num1 = if(x > y) x else y
+                    num2 = if(x < y) x else y
+                    ans = num1 - num2
+                }
+                else -> {
+                    num1 = (0..100).random()
+                    num2 = (0..100).random()
+                    ans = op.calculate(x = num1, y = num2)!!
+                }
+
+            }
+            calcs += SimpleCalculation(
+                num1,
+                op,
+                num2,
+                ans
+            )
+        }
+
+        return calcs
+    }
+
+    fun getRandomOffsets(n: Int, max: Int = 100): Array<Dp>{
+        var offsets = arrayOf<Dp>()
+        for(i in 1..n){
+            offsets += (0..max).random().dp
+        }
+        return offsets
+    }
+
 
     fun getCardNumbers(): IntArray {
         val large: IntArray = listOf(25, 50, 75, 100).shuffled().toIntArray()

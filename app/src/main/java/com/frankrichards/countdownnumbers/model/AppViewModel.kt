@@ -109,7 +109,6 @@ class AppViewModel : ViewModel() {
     fun quitGame() {
         showQuitDialog = false
         countdownJob.cancel()
-        resetGame()
     }
 
     private fun goToResult() {
@@ -195,6 +194,7 @@ class AppViewModel : ViewModel() {
         calcError = false
         calculations = arrayOf()
         calculationNumbers = getAvailableNumbers(selectedNumbers)
+        currentCalculation = null
     }
 
     fun back() {
@@ -210,15 +210,19 @@ class AppViewModel : ViewModel() {
         } else if (calculations.size > 1) {
             val c = calculations.last()
             calculations = calculations.slice(0..<calculations.lastIndex).toTypedArray()
+            calculationNumbers = calculationNumbers.slice(0..<calculationNumbers.lastIndex).toTypedArray()
             num1 = c.number1
             operation = c.operation
             num2 = c.number2
+            currentCalculation = null
         } else if (calculations.isNotEmpty()) {
             val c = calculations.last()
             calculations = arrayOf()
+            calculationNumbers = getAvailableNumbers(selectedNumbers)
             num1 = c.number1
             operation = c.operation
             num2 = c.number2
+            currentCalculation = null
         }
     }
 

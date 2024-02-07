@@ -1,5 +1,6 @@
 package com.frankrichards.countdownnumbers.components
 
+import android.util.Log
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
@@ -86,9 +87,9 @@ fun CalculationBox(
                             } else {
                                 MaterialTheme.colorScheme.secondary
                             }
-//                            if(solution.value != calculations[i].selectedSolution){
-//                                Log.e("CalculationBox", "ERROR SOLUTIONS DON'T MATCH")
-//                            }
+                            if(solution.value != calculations[i].selectedSolution){
+                                Log.e("CalculationBox", "ERROR SOLUTIONS DON'T MATCH")
+                            }
                             NumberCard(
                                 number = calculations[i].number1,
                                 color = MaterialTheme.colorScheme.secondary,

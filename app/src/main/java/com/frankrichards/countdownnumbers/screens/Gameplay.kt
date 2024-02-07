@@ -58,8 +58,8 @@ fun Gameplay(
     if (viewModel.showQuitDialog) {
         QuitDialog(
             quit = {
-                viewModel.quitGame()
                 navigateTo(NavigationItem.Menu.route)
+                viewModel.quitGame()
             },
             dismiss = {
                 viewModel.showQuitDialog = false
