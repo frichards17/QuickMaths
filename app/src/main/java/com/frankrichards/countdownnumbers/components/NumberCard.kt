@@ -1,5 +1,6 @@
 package com.frankrichards.countdownnumbers.components
 
+import android.util.Log
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -47,7 +48,10 @@ fun NumberCard(
     } else {
         SquareCard(
             text = displayNumber(number.value),
-            onClick = { onClick(number) },
+            onClick = {
+                Log.v("ClickTest", "CLICKED!")
+                onClick(number)
+                      },
             color = color,
             modifier = modifier
         )

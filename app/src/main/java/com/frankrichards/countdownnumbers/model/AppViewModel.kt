@@ -1,5 +1,6 @@
 package com.frankrichards.countdownnumbers.model
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -55,9 +56,9 @@ class AppViewModel : ViewModel() {
     var showQuitDialog by mutableStateOf(false)
 
     // Result
-    var answerValid by mutableStateOf(false)
+    private var answerValid by mutableStateOf(false)
     var answerCorrect by mutableStateOf(false)
-    var diffFromCorrect by mutableIntStateOf(0)
+    var bestAnswer by mutableStateOf(0)
     var bestSolution by mutableStateOf(arrayOf<SimpleCalculation>())
 
     fun resetGame() {
@@ -118,6 +119,7 @@ class AppViewModel : ViewModel() {
         getSolution()
         if (!answerCorrect) {
             var dif = targetNum
+            var best = 0
             for (c in calculationNumbers) {
                 if (c.isAvailable) {
                     val n = abs(
@@ -126,15 +128,18 @@ class AppViewModel : ViewModel() {
                     )
                     if (n < dif) {
                         dif = n
+                        best = c.value
                     }
                 }
             }
-            diffFromCorrect = dif
+            bestAnswer = best
+        }else{
+            bestAnswer = targetNum
         }
         viewModelScope.launch {
-            delay(5.seconds)
+            delay(3.seconds)
+            Log.v("ResultTest", "Delayed. Game Progress: ${gameProgress.name}")
             gameProgress = GameProgress.Result
-
         }
 
     }
@@ -219,6 +224,8 @@ class AppViewModel : ViewModel() {
             val c = calculations.last()
             calculations = arrayOf()
             calculationNumbers = getAvailableNumbers(selectedNumbers)
+            calculationNumbers[c.number1.index].isAvailable = false
+            calculationNumbers[c.number2.index].isAvailable = false
             num1 = c.number1
             operation = c.operation
             num2 = c.number2
@@ -252,7 +259,10 @@ class AppViewModel : ViewModel() {
     }
 
     private fun checkAnswer() {
-        answerCorrect = calculations.last().selectedSolution == targetNum
+        answerCorrect = false
+        calculations.lastOrNull()?.let{
+            answerCorrect = it.selectedSolution == targetNum
+        }
 
         answerValid = true
         for (c in calculations) {
@@ -269,7 +279,6 @@ class AppViewModel : ViewModel() {
                 targetNum,
                 selectedNumbers
             )
-            gameProgress = GameProgress.Result
         }
     }
 

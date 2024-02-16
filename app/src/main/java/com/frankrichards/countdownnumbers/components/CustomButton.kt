@@ -1,5 +1,6 @@
 package com.frankrichards.countdownnumbers.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,8 +23,8 @@ fun CustomButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    color: Color = MaterialTheme.colorScheme.secondary,
-    textColor: Color = MaterialTheme.colorScheme.onSecondary
+    color: Color = MaterialTheme.colorScheme.primary,
+    textColor: Color = MaterialTheme.colorScheme.onPrimary
 ){
     Button(
         onClick = onClick,
@@ -33,11 +34,11 @@ fun CustomButton(
         modifier = modifier.width(200.dp)
     ) {
         Text(
-            text,
+            text.uppercase(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.button,
             modifier = Modifier.padding(8.dp),
-            color = textColor
+            color = if(enabled) textColor else MaterialTheme.colorScheme.onSurface
         )
     }
 }
@@ -47,5 +48,13 @@ fun CustomButton(
 fun MenuButton_Preview(){
     CountdownNumbersTheme {
         CustomButton("Click Me", onClick = {})
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun MenuButton_Preview2(){
+    CountdownNumbersTheme {
+        CustomButton("Click Me", onClick = {}, enabled = false)
     }
 }

@@ -1,16 +1,24 @@
 package com.frankrichards.countdownnumbers.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frankrichards.countdownnumbers.model.Calculation
 import com.frankrichards.countdownnumbers.model.CalculationNumber
 import com.frankrichards.countdownnumbers.model.Operation
+import com.frankrichards.countdownnumbers.ui.theme.CountdownNumbersTheme
 
 @Composable
 fun GameplayComponent(
@@ -25,7 +33,8 @@ fun GameplayComponent(
     currentOp: Operation? = null,
     currentNum2: Int? = null,
     calcError: Boolean = false,
-    errorMsg: String? = null
+    errorMsg: String? = null,
+    gameOver: Boolean = false
 ) {
     val selectedNums = calculationNumbers
         .slice(0..<6)
@@ -35,31 +44,30 @@ fun GameplayComponent(
         .toTypedArray()
 
     Column(
-        modifier = modifier.fillMaxHeight(0.75f),
+        modifier = modifier.background(MaterialTheme.colorScheme.surface),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        SelectedCards(
-            selectedNums,
-            numberClick,
-            modifier = Modifier.padding(horizontal = 8.dp)
-        )
-        Controls(
-            buttonClick = operationClick,
-            modifier = Modifier.padding(horizontal = 8.dp)
-        )
         CalculationBox(
-            modifier = Modifier.weight(1f),
             calculations = calculations,
-            availableResults = resultNums,
             currentNum1 = currentNum1,
             currentOp = currentOp,
             currentNum2 = currentNum2,
+            modifier = Modifier.weight(1f),
             calcError = calcError,
-            resultOnClick = numberClick,
-            back = back,
-            reset = reset,
             error = errorMsg
         )
+        AnimatedVisibility(
+            visible = !gameOver,
+            exit = slideOutVertically(animationSpec = tween(2000)) { it }
+        ){
+            ControlsAlt(
+                nums = calculationNumbers,
+                operationClick = operationClick,
+                numberClick = numberClick,
+                back = back,
+                reset = reset
+            )
+        }
     }
 }
 
@@ -100,14 +108,18 @@ fun GameplayComponent_Preview() {
             value = 19
         )
     )
-
-    GameplayComponent(
-        calculationNumbers = nums,
-        operationClick = {},
-        numberClick = {},
-        calculations = arrayOf(),
-        back = {},
-        reset = {},
-        errorMsg = "Hello"
-    )
+    CountdownNumbersTheme {
+        GameplayComponent(
+            calculationNumbers = nums,
+            operationClick = {},
+            numberClick = {},
+            calculations = arrayOf(),
+            back = {},
+            reset = {},
+            errorMsg = "Hello",
+            currentNum1 = 75,
+            currentOp = Operation.Add,
+            currentNum2 = 100
+        )
+    }
 }

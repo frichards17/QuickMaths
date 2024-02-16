@@ -1,5 +1,6 @@
 package com.frankrichards.countdownnumbers.components
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -29,21 +30,20 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.frankrichards.countdownnumbers.ui.theme.CountdownNumbersTheme
 import com.frankrichards.countdownnumbers.ui.theme.calculation
-import com.frankrichards.countdownnumbers.ui.theme.primaryVariant
 import com.frankrichards.countdownnumbers.util.Utility
 import kotlinx.coroutines.delay
-import kotlin.math.abs
 
 @Composable
 fun ScrollingMaths(
-    textColor: Color = MaterialTheme.colorScheme.primaryVariant,
-    n: Int = 10
+    textColor: Color = MaterialTheme.colorScheme.tertiary,
+    n: Int = LocalConfiguration.current.screenHeightDp / 100
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "ScrollingMaths")
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val offsets by remember { mutableStateOf(Utility.getRandomOffsets(n)) }
     val calcs by remember { mutableStateOf(Utility.getRandomCalculations(n)) }
 
+    Log.v("ScrollingMaths", "Scrolling nums count ${n}")
     val xOffsets = remember {
         (0..<n).map {
             Animatable(-200f)
@@ -58,7 +58,7 @@ fun ScrollingMaths(
                 animationSpec = infiniteRepeatable(
                     animation = tween(5000, easing = LinearEasing),
                     repeatMode = RepeatMode.Restart
-                )
+                ),
             )
         }
     }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.frankrichards.countdownnumbers.ui.theme.targetNum
 
@@ -24,7 +25,8 @@ import com.frankrichards.countdownnumbers.ui.theme.targetNum
 @Composable
 fun TargetNum(
     num: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color? = null
 ) {
     var lastNum by remember {
         mutableStateOf(num)
@@ -58,11 +60,20 @@ fun TargetNum(
                 },
                 label = "Target digit $i"
             ) {
-                Text(
-                    text = it.toString(),
-                    style = MaterialTheme.typography.targetNum,
-                    softWrap = false
-                )
+                if(color == null) {
+                    Text(
+                        text = it.toString(),
+                        style = MaterialTheme.typography.targetNum,
+                        softWrap = false
+                    )
+                }else{
+                    Text(
+                        text = it.toString(),
+                        style = MaterialTheme.typography.targetNum,
+                        softWrap = false,
+                        color = color
+                    )
+                }
                 
             }
         }

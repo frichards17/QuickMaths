@@ -1,5 +1,6 @@
 package com.frankrichards.countdownnumbers.screens
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.tween
@@ -46,12 +47,12 @@ fun MainMenu(
     var showButtons by remember { mutableStateOf(false) }
 
     LaunchedEffect(showButtons){
-        delay(3000)
+        delay(1500)
         showButtons = true
     }
 
     Surface(
-        color = MaterialTheme.colorScheme.primary
+        color = MaterialTheme.colorScheme.secondary
     ) {
 
         ScrollingMaths()
@@ -99,7 +100,9 @@ fun MainMenu(
     }
 }
 
+@Preview(widthDp = 480, heightDp = 800, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(widthDp = 480, heightDp = 800)
+
 @Composable
 fun MainMenu_Preview(){
     CountdownNumbersTheme {

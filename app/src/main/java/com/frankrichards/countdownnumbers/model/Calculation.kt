@@ -28,6 +28,13 @@ class Calculation(val number1: CalculationNumber, val operation: Operation, val 
 
     }
 
+    override fun toString(): String {
+        return if(selectedSolution != null) {
+            "${number1.value} ${operation.label} ${number2.value} = $selectedSolution"
+        }else{
+            "${number1.value} ${operation.label} ${number2.value}"
+        }
+    }
     private fun calculate(number1: Int, number2: Int): Int?{
         return operation.calculate(number1, number2)
     }
@@ -70,10 +77,10 @@ class Calculation(val number1: CalculationNumber, val operation: Operation, val 
     }
 
     private fun randomNumberNear(n: Int): Int {
-        val variance = (0.25 * n).roundToInt()
+        val variance = arrayOf(5, (0.25 * n).roundToInt()).max()
 
         val lower = if(n-variance > 1) {
-            n-3
+            n-variance
         }else{
             1
         }

@@ -55,7 +55,7 @@ object Utility {
     fun getRandomOffsets(n: Int, max: Int = 100): Array<Dp>{
         var offsets = arrayOf<Dp>()
         for(i in 1..n){
-            offsets += (0..max).random().dp
+            offsets += (-(max / 2)..(max/2)).random().dp
         }
         return offsets
     }

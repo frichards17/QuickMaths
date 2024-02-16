@@ -12,9 +12,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -24,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
@@ -31,15 +34,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frankrichards.countdownnumbers.components.CalculationDialog
+import com.frankrichards.countdownnumbers.components.CountdownIndicator
 import com.frankrichards.countdownnumbers.model.AppViewModel
 import com.frankrichards.countdownnumbers.model.GameProgress
 import com.frankrichards.countdownnumbers.components.CustomButton
+import com.frankrichards.countdownnumbers.components.CustomCard
 import com.frankrichards.countdownnumbers.components.GameplayComponent
 import com.frankrichards.countdownnumbers.components.NumberCardLayout
 import com.frankrichards.countdownnumbers.components.QuitDialog
 import com.frankrichards.countdownnumbers.components.TargetNum
+import com.frankrichards.countdownnumbers.model.Calculation
+import com.frankrichards.countdownnumbers.model.CalculationNumber
+import com.frankrichards.countdownnumbers.model.Operation
 import com.frankrichards.countdownnumbers.nav.NavigationItem
 import com.frankrichards.countdownnumbers.ui.theme.CountdownNumbersTheme
+import com.frankrichards.countdownnumbers.ui.theme.targetNum
 import com.frankrichards.countdownnumbers.util.Utility
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -103,6 +112,10 @@ fun Gameplay(
             && (viewModel.bestSolution.isNotEmpty() ||
                     viewModel.answerCorrect)
         ) {
+            Log.v("ResultTest", "Launched effect progress: ${viewModel.gameProgress.name}")
+            Log.v("ResultTest", "Launched effect bestSolution: ${viewModel.bestSolution.count()}")
+            Log.v("ResultTest", "Launched effect answerCorrect: ${viewModel.answerCorrect}")
+            Log.v("ResultTest", "Launched effect navigating to result!")
             navigateTo(NavigationItem.Result.route)
         }
     }
@@ -110,17 +123,42 @@ fun Gameplay(
     Surface(
         color = MaterialTheme.colorScheme.background
     ) {
-
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-            TargetNum(
-                num = "$animatedDigit1$animatedDigit2$animatedDigit3".toInt(),
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
+            CountdownIndicator(
+                countdown = viewModel.timeLeft,
+                max = 30
             )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(horizontal = 16.dp).weight(1f)
+            ) {
+
+                CustomCard(
+                    title = "Target:",
+                    modifier = Modifier.weight(1f)
+                ) {
+                    TargetNum(
+                        num = "$animatedDigit1$animatedDigit2$animatedDigit3".toInt(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                }
+
+                CustomCard(
+                    title = "Answer:",
+                    modifier = Modifier.weight(1f)
+                ) {
+                    val answer = viewModel.calculations.lastOrNull()?.selectedSolution ?: "000"
+                    Text(
+                        text = answer.toString(),
+                        style = MaterialTheme.typography.targetNum
+                    )
+                }
+            }
 
             AnimatedContent(
                 targetState = viewModel.gameProgress,
@@ -129,6 +167,7 @@ fun Gameplay(
                 },
                 label = "Main Gameplay"
             ) { progress ->
+
                 when (progress) {
                     GameProgress.CardSelect -> {
                         Column(
@@ -182,7 +221,7 @@ fun Gameplay(
                     GameProgress.TargetGen -> {
 
                         GameplayComponent(
-                            modifier = Modifier.alpha(0.5f),
+                            modifier = Modifier.alpha(0.5f).fillMaxHeight(0.75f),
                             calculationNumbers = viewModel.calculationNumbers,
                             operationClick = {},
                             numberClick = {},
@@ -192,7 +231,7 @@ fun Gameplay(
                             errorMsg = null
                         )
                         Column(
-                            verticalArrangement = Arrangement.Center,
+                            verticalArrangement = Arrangement.Top,
                             modifier = Modifier.fillMaxHeight(0.75f)
                         ) {
                             Text(
@@ -201,7 +240,7 @@ fun Gameplay(
                                 style = MaterialTheme.typography.titleLarge,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(10.dp)
+                                    .padding(32.dp)
                             )
                         }
 
@@ -209,7 +248,6 @@ fun Gameplay(
 
                     GameProgress.Countdown -> {
                         Column {
-                            Text("Time left: ${viewModel.timeLeft} seconds")
                             GameplayComponent(
                                 viewModel.calculationNumbers,
                                 numberClick = {
@@ -225,7 +263,8 @@ fun Gameplay(
                                 calcError = viewModel.calcError,
                                 back = { viewModel.back() },
                                 reset = { viewModel.reset() },
-                                errorMsg = viewModel.calculationErrMsg
+                                errorMsg = viewModel.calculationErrMsg,
+                                modifier = Modifier.fillMaxHeight(0.75f)
                             )
                         }
 
@@ -241,7 +280,6 @@ fun Gameplay(
 
                     GameProgress.GameOver -> {
                         Column {
-                            Text("Game Over!")
                             GameplayComponent(
                                 viewModel.calculationNumbers,
                                 numberClick = {},
@@ -253,7 +291,9 @@ fun Gameplay(
                                 calcError = false,
                                 back = {},
                                 reset = {},
-                                errorMsg = viewModel.calculationErrMsg
+                                errorMsg = viewModel.calculationErrMsg,
+                                gameOver = true,
+                                modifier = Modifier.fillMaxHeight(0.75f)
                             )
                         }
                     }
@@ -284,7 +324,24 @@ fun Int.getDigit(index: Int): Int {
 @Preview(widthDp = 480, heightDp = 800, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun Gameplay_Preview() {
+    val v: AppViewModel = viewModel()
+    v.goToTargetGen(
+        selectedNumbers = intArrayOf(100, 75, 8, 4, 2, 3),
+        targetNum = 312
+    )
+    v.gameProgress = GameProgress.GameOver
+//    v.goToPlay()
+//    val c = Calculation(
+//        number1 = CalculationNumber(index = 0, value = 100),
+//        operation = Operation.Add,
+//        number2 = CalculationNumber(index = 1, value = 75)
+//    )
+//    c.selectedSolution = 175
+//    v.calculations += c
+//    v.calculationNumbers += CalculationNumber(index = 6, value = 175)
+//    v.num1 = CalculationNumber(6, 100)
+//    v.operation = Operation.Multiply
     CountdownNumbersTheme {
-        Gameplay({}, viewModel())
+        Gameplay({}, v)
     }
 }

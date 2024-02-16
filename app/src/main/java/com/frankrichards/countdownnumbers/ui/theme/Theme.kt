@@ -19,21 +19,24 @@ import androidx.core.view.WindowCompat
 import java.time.OffsetTime
 
 private val DarkColorScheme = darkColorScheme(
-    primary = DarkBlue,
-    secondary = LightBlue,
-    tertiary = OffYellow,
+    primary = LightBlue,
+    onPrimary = DarkBlueVariant,
+    secondary = DarkBlue,
+    onSecondary = White,
+    tertiary = DarkBlueVariant,
     background = Black,
-    onBackground = White,
+    onBackground = OffWhite,
     surface = OffBlack,
     error = Red,
     onError = Pink
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = LightBlue,
-    secondary = DarkBlue,
-    tertiary = OffYellow,
-    onSecondary = White,
+    primary = DarkBlue,
+    onPrimary = White,
+    secondary = LightBlue,
+    onSecondary = DarkBlueVariant,
+    tertiary = LightBlueVariant,
     background = White,
     onBackground = Black,
     surface = OffWhite,
@@ -56,6 +59,8 @@ val ColorScheme.surfaceBorder: Color
         return Grey
     }
 
+
+
 val ColorScheme.positive: Color
     get() {
         return Green
@@ -66,9 +71,14 @@ val ColorScheme.onPositive: Color
         return LightGreen
     }
 
-val ColorScheme.primaryVariant: Color
-    get(){
-        return VariantBlue
+val ColorScheme.secondaryOnBackground: Color
+    @Composable
+    get() {
+        return if(isSystemInDarkTheme()){
+            LightGrey
+        }else{
+            DarkGrey
+        }
     }
 
 
@@ -80,6 +90,7 @@ fun CountdownNumbersTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current

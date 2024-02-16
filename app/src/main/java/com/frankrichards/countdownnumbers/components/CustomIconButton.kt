@@ -1,5 +1,8 @@
 package com.frankrichards.countdownnumbers.components
 
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +28,7 @@ fun CustomIconButton(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.size(size),
+        modifier = modifier.aspectRatio(1f),
         color = color,
         shape = RoundedCornerShape(10.dp)
     ) {

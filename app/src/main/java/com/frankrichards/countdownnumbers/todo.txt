@@ -1,0 +1,6 @@
+- Keep target and answer on game over screen --DONE--
+- Make numbers fit in boxes
+- Move loading game (play again) to separate screen
+- Better transition from gameplay to result
+- Dark mode toggle
+- settings
