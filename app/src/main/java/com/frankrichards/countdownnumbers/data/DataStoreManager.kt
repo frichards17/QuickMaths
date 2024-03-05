@@ -6,28 +6,28 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.map
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import kotlinx.coroutines.flow.Flow
 
 const val SETTINGS = "settings"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = SETTINGS)
 
-class DataStoreManager(val context: Context) {
+class DataStoreManager(private val context: Context) {
 
     companion object {
-        val TIMER = intPreferencesKey("TIMER")
+        val TIMER = intPreferencesKey("timer")
+        val DARK_MODE = booleanPreferencesKey("dark_mode")
     }
 
-    suspend fun saveToDataStore(settings: Settings) {
-        context.dataStore.edit {
-            it[TIMER] = settings.timer
+    suspend fun storeDarkMode(b: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[DARK_MODE] = b
         }
-
     }
 
-    fun getFromDataStore() = context.dataStore.data.map {
-        Settings(
-            timer = it[TIMER]?:30
-        )
+    val darkModeFlow: Flow<Boolean?> = context.dataStore.data.map { preferences ->
+        preferences[DARK_MODE] ?: false
     }
 
 }

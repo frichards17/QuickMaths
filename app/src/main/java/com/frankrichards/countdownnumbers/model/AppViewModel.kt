@@ -5,8 +5,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.frankrichards.countdownnumbers.data.DataStoreManager
 import com.frankrichards.countdownnumbers.util.Utility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -17,7 +20,7 @@ import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.seconds
 
-class AppViewModel : ViewModel() {
+class AppViewModel(val settings: DataStoreManager) : ViewModel() {
 
     private var selectedNumbers by mutableStateOf(intArrayOf())
     var targetNum by mutableIntStateOf(0)
@@ -77,7 +80,8 @@ class AppViewModel : ViewModel() {
         reset()
     }
 
-    // GAME PROGRESS
+
+    //region GAME PROGRESS
     fun goToTargetGen(selectedNumbers: IntArray, targetNum: Int) {
 
         calculationNumbers = getAvailableNumbers(selectedNumbers)
@@ -143,9 +147,9 @@ class AppViewModel : ViewModel() {
         }
 
     }
+    //endregion
 
-    // CONTROLS
-
+    //region CONTROLS
     fun numberClick(n: CalculationNumber) {
         if (
             !calculationNumbers.contains(n)
@@ -232,9 +236,9 @@ class AppViewModel : ViewModel() {
             currentCalculation = null
         }
     }
+    //endregion
 
-    // DIALOG ANSWER
-
+    //region DIALOG ANSWER
     fun calculationAnswer(answer: Int) {
         currentCalculation!!.selectedSolution = answer
         calculationNumbers += CalculationNumber(
@@ -281,6 +285,17 @@ class AppViewModel : ViewModel() {
             )
         }
     }
+    //endregion
+
+    //region SETTINGS
+
+    fun setDarkMode(b: Boolean){
+        viewModelScope.launch {
+            settings.storeDarkMode(b)
+        }
+    }
+
+    //endregion
 
 }
 
