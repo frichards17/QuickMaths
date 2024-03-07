@@ -71,6 +71,16 @@ val ColorScheme.onPositive: Color
         return LightGreen
     }
 
+val ColorScheme.lightText: Color
+    get() {
+        return White
+    }
+
+val ColorScheme.lightSurface: Color
+    get() {
+        return OffWhite
+    }
+
 val ColorScheme.secondaryOnBackground: Color
     @Composable
     get() {

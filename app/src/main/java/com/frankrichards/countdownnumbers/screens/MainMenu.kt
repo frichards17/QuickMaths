@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frankrichards.countdownnumbers.R
 import com.frankrichards.countdownnumbers.components.CustomButton
 import com.frankrichards.countdownnumbers.components.ScrollingMaths
+import com.frankrichards.countdownnumbers.data.DataStoreManager
 import com.frankrichards.countdownnumbers.model.AppViewModel
 import com.frankrichards.countdownnumbers.nav.NavigationItem
 import com.frankrichards.countdownnumbers.ui.theme.CountdownNumbersTheme
@@ -41,7 +43,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun MainMenu(
     navigateTo: (route: String) -> Unit,
-    viewModel: AppViewModel = viewModel()
+    viewModel: AppViewModel = AppViewModel(DataStoreManager(LocalContext.current))
 ){
     val scope = rememberCoroutineScope()
     var showButtons by remember { mutableStateOf(false) }
@@ -84,7 +86,6 @@ fun MainMenu(
                         viewModel.resetGame()
                         navigateTo(NavigationItem.Gameplay.route)
                     },
-                    modifier = Modifier.fillMaxWidth()
                 )
                 CustomButton(
                     text = "SETTINGS",
@@ -93,7 +94,6 @@ fun MainMenu(
                     },
                     color = MaterialTheme.colorScheme.background,
                     textColor = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }

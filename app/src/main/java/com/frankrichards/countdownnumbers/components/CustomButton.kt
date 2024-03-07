@@ -1,6 +1,7 @@
 package com.frankrichards.countdownnumbers.components
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,8 +12,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.frankrichards.countdownnumbers.ui.theme.CountdownNumbersTheme
 import com.frankrichards.countdownnumbers.ui.theme.button
@@ -24,20 +28,22 @@ fun CustomButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     color: Color = MaterialTheme.colorScheme.primary,
-    textColor: Color = MaterialTheme.colorScheme.onPrimary
+    textColor: Color = MaterialTheme.colorScheme.onPrimary,
+    textStyle: TextStyle = MaterialTheme.typography.button,
+    textPadding: Dp = 8.dp
 ){
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(10.dp),
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(containerColor = color),
-        modifier = modifier.width(200.dp)
+        modifier = modifier.fillMaxWidth()
     ) {
         Text(
             text.uppercase(),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.button,
-            modifier = Modifier.padding(8.dp),
+            style = textStyle,
+            modifier = Modifier.padding(vertical = textPadding),
             color = if(enabled) textColor else MaterialTheme.colorScheme.onSurface
         )
     }

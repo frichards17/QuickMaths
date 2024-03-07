@@ -18,21 +18,23 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            CountdownNumbersTheme {
+//            CountdownNumbersTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     App(modifier = Modifier.fillMaxSize())
                 }
-            }
+//            }
         }
     }
 }
 
 @Composable
 fun App(modifier: Modifier = Modifier) {
-    AppNavHost(navController = rememberNavController())
+    AppNavHost(
+        navController = rememberNavController(),
+    )
 }
 
 @Preview(widthDp = 480, heightDp = 800)

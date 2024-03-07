@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.frankrichards.countdownnumbers.data.DataStoreManager
+import com.frankrichards.countdownnumbers.screens.Difficulty
 import com.frankrichards.countdownnumbers.util.Utility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -292,6 +293,24 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
     fun setDarkMode(b: Boolean){
         viewModelScope.launch {
             settings.storeDarkMode(b)
+        }
+    }
+
+    fun setDifficulty(difficulty: Difficulty){
+        viewModelScope.launch {
+            settings.storeDifficulty(difficulty.label)
+        }
+    }
+
+    fun setMusic(b: Boolean){
+        viewModelScope.launch {
+            settings.storeMusic(b)
+        }
+    }
+
+    fun setSFX(b: Boolean){
+        viewModelScope.launch {
+            settings.storeSFX(b)
         }
     }
 
