@@ -8,19 +8,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.frankrichards.countdownnumbers.R
 import com.frankrichards.countdownnumbers.model.CalculationNumber
 import com.frankrichards.countdownnumbers.model.Operation
 import com.frankrichards.countdownnumbers.ui.theme.CountdownNumbersTheme
+import androidx.compose.ui.text.TextStyle
 
 @Composable
 fun Controls(
@@ -96,6 +98,7 @@ fun ControlsAlt(
             if(nums.count() > 6) {
                 for (num in nums.slice(6..nums.lastIndex)) {
                     if (num.isAvailable) {
+                        
                         NumberCard(
                             number = num,
                             onClick = numberClick,
@@ -234,7 +237,7 @@ fun Controls_Preview() {
         ),
         CalculationNumber(
             index = 7,
-            value = 200
+            value = 2000
         ),
         CalculationNumber(
             index = 8,

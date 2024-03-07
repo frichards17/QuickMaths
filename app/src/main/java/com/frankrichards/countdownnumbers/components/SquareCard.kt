@@ -60,13 +60,14 @@ fun SquareCard(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,
         fontSize = 28.sp
-    )
+    ),
+    aspectRatio: Float = 1f
 ) {
     if(onClick != null) {
         Surface(
             modifier =
             modifier
-                .aspectRatio(1f)
+                .aspectRatio(aspectRatio)
                 .clip(RoundedCornerShape(10.dp)),
             color = color,
             onClick = onClick
@@ -85,7 +86,7 @@ fun SquareCard(
         Surface(
             modifier =
             modifier
-                .aspectRatio(1f)
+                .aspectRatio(aspectRatio)
                 .clip(RoundedCornerShape(10.dp)),
             color = color
         ) {

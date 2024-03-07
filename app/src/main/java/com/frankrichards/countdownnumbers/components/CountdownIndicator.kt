@@ -52,7 +52,7 @@ fun CountdownIndicator(
 
         Text(
             text,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             color = textColor,
             textAlign = TextAlign.Center,
             modifier = Modifier

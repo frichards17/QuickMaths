@@ -8,18 +8,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.frankrichards.countdownnumbers.R
 
-val quicksand = FontFamily(
-    Font(R.font.quicksand_light, FontWeight.Light),
-    Font(R.font.quicksand_medium, FontWeight.Medium),
-    Font(R.font.quicksand_regular, FontWeight.Normal),
-    Font(R.font.quicksand_semibold, FontWeight.SemiBold),
-    Font(R.font.quicksand_bold, FontWeight.Bold)
-)
+public val FontFamily.Quicksand: FontFamily
+    get(){
+        return quicksand
+    }
+
 
 
 // Set of Material typography styles to start with
 val Typography = Typography(
     titleLarge = TextStyle(
+        fontFamily = quicksand,
+        fontWeight = FontWeight.Bold,
+        fontSize = 48.sp
+    ),
+    titleMedium = TextStyle(
         fontFamily = quicksand,
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp
@@ -86,4 +89,3 @@ val Typography.calculation: TextStyle
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold
     )
-

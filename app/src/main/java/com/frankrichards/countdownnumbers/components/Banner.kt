@@ -21,7 +21,7 @@ import com.frankrichards.countdownnumbers.ui.theme.CountdownNumbersTheme
 fun Banner(
     text: String,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = MaterialTheme.typography.titleLarge,
+    textStyle: TextStyle = MaterialTheme.typography.titleMedium,
     color: Color = MaterialTheme.colorScheme.primary
 ) {
     Surface(

@@ -38,7 +38,7 @@ fun CalculationDialog(
             ) {
                 Text(
                     calculation.getQuestion(),
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
@@ -64,9 +64,9 @@ fun CalculationDialog_Preview() {
     CountdownNumbersTheme {
         CalculationDialog(
             calculation = Calculation(
-                CalculationNumber(0, 1),
-                Operation.Add,
-                CalculationNumber(1, 2)
+                CalculationNumber(0, 75),
+                Operation.Multiply,
+                CalculationNumber(1, 50)
             ),
             {}
         )

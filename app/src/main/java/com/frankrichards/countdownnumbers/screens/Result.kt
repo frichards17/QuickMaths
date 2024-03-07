@@ -80,148 +80,154 @@ fun Result(
     }
 
     Surface(
-        color = MaterialTheme.colorScheme.secondary,
+        color = Color.Transparent,
         modifier = Modifier.fillMaxSize()
     ) {
 
-
-        Column(
-            modifier = Modifier.fillMaxHeight()
+        AnimatedVisibility(
+            visible = !playAgain,
+            exit = fadeOut(
+                animationSpec = tween(300)
+            )
         ) {
-            Banner(
-                msg,
-                color = MaterialTheme.colorScheme.background,
-                modifier = Modifier.padding(top = 32.dp)
-            )
-
-            val topBottomFade = Brush.verticalGradient(
-                0f to Color.Transparent,
-                0.05f to MaterialTheme.colorScheme.secondary,
-                0.95f to MaterialTheme.colorScheme.secondary,
-                1f to Color.Transparent
-            )
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                state = listState,
-                modifier = Modifier
-                    .weight(1f)
-                    .fadingEdge(topBottomFade)
+            Column(
+                modifier = Modifier.fillMaxHeight()
             ) {
-                item {
+                Banner(
+                    msg,
+                    color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.padding(top = 32.dp)
+                )
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp)
-                    ) {
+                val topBottomFade = Brush.verticalGradient(
+                    0f to Color.Transparent,
+                    0.05f to MaterialTheme.colorScheme.secondary,
+                    0.95f to MaterialTheme.colorScheme.secondary,
+                    1f to Color.Transparent
+                )
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    state = listState,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fadingEdge(topBottomFade)
+                ) {
+                    item {
 
-                        CustomCard(
-                            title = "Target:",
-                            color = MaterialTheme.colorScheme.background,
-                            modifier = Modifier.weight(1f)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp)
                         ) {
-                            Text(
-                                text = viewModel.targetNum.toString(),
-                                style = MaterialTheme.typography.targetNum,
-                                maxLines = 1,
-                                modifier = Modifier.padding(24.dp)
-                            )
-                        }
 
-                        CustomCard(
-                            title = "Answer:",
-                            color = MaterialTheme.colorScheme.background,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            val text = if (viewModel.calculationNumbers.count() > 6) {
-                                viewModel.bestAnswer.toString()
-                            } else {
-                                "?"
+                            CustomCard(
+                                title = "Target:",
+                                color = MaterialTheme.colorScheme.background,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = viewModel.targetNum.toString(),
+                                    style = MaterialTheme.typography.targetNum,
+                                    maxLines = 1,
+                                    modifier = Modifier.padding(24.dp)
+                                )
                             }
-                            Text(
-                                text = text,
-                                style = MaterialTheme.typography.targetNum,
-                                maxLines = 1,
-                                modifier = Modifier.padding(24.dp),
-                                color = if (viewModel.answerCorrect) {
-                                    MaterialTheme.colorScheme.positive
+
+                            CustomCard(
+                                title = "Answer:",
+                                color = MaterialTheme.colorScheme.background,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                val text = if (viewModel.calculationNumbers.count() > 6) {
+                                    viewModel.bestAnswer.toString()
                                 } else {
-                                    MaterialTheme.colorScheme.error
+                                    "?"
                                 }
-                            )
+                                Text(
+                                    text = text,
+                                    style = MaterialTheme.typography.targetNum,
+                                    maxLines = 1,
+                                    modifier = Modifier.padding(24.dp),
+                                    color = if (viewModel.answerCorrect) {
+                                        MaterialTheme.colorScheme.positive
+                                    } else {
+                                        MaterialTheme.colorScheme.error
+                                    }
+                                )
 
+                            }
                         }
                     }
-                }
 
-                if (viewModel.calculations.isNotEmpty()) {
-                    item {
+                    if (viewModel.calculations.isNotEmpty()) {
+                        item {
 
-                        CustomCard(
-                            title = "Your solution:",
-                            color = MaterialTheme.colorScheme.background,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        ) {
-                            Column {
-                                viewModel.calculations.forEach { calc ->
-                                    Text(
-                                        calc.toString(),
-                                        style = MaterialTheme.typography.calculation
-                                    )
+                            CustomCard(
+                                title = "Your solution:",
+                                color = MaterialTheme.colorScheme.background,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            ) {
+                                Column {
+                                    viewModel.calculations.forEach { calc ->
+                                        Text(
+                                            calc.toString(),
+                                            style = MaterialTheme.typography.calculation
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                if (!viewModel.answerCorrect) {
-                    item {
-                        CustomCard(
-                            title = "Best solution:",
-                            color = MaterialTheme.colorScheme.background,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        ) {
-                            Column {
-                                viewModel.bestSolution.forEach { calc ->
-                                    Text(
-                                        calc.toString(),
-                                        style = MaterialTheme.typography.calculation
-                                    )
+                    if (!viewModel.answerCorrect) {
+                        item {
+                            CustomCard(
+                                title = "Best solution:",
+                                color = MaterialTheme.colorScheme.background,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            ) {
+                                Column {
+                                    viewModel.bestSolution.forEach { calc ->
+                                        Text(
+                                            calc.toString(),
+                                            style = MaterialTheme.typography.calculation
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
+                    item {
+                        Box(
+                            modifier = Modifier.height(32.dp)
+                        )
+                    }
                 }
-                item {
-                    Box(
-                        modifier = Modifier.height(32.dp)
+
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Bottom),
+                    modifier = Modifier
+                        .padding(8.dp)
+                    //                    .weight(1f)
+                ) {
+                    CustomButton(
+                        text = "PLAY AGAIN",
+                        onClick = {
+                            playAgain = true
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    CustomButton(
+                        text = "MAIN MENU",
+                        onClick = {
+                            navigateTo(NavigationItem.Menu.route)
+                        },
+                        color = MaterialTheme.colorScheme.background,
+                        textColor = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
-            }
-
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Bottom),
-                modifier = Modifier
-                    .padding(8.dp)
-                //                    .weight(1f)
-            ) {
-                CustomButton(
-                    text = "PLAY AGAIN",
-                    onClick = {
-                        playAgain = true
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                CustomButton(
-                    text = "MAIN MENU",
-                    onClick = {
-                        navigateTo(NavigationItem.Menu.route)
-                    },
-                    color = MaterialTheme.colorScheme.background,
-                    textColor = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.fillMaxWidth()
-                )
             }
         }
 
@@ -231,10 +237,10 @@ fun Result(
                 animationSpec = tween(300)
             )
         ) {
-            Surface(
-                color = MaterialTheme.colorScheme.secondary
-            ) {
-                ScrollingMaths()
+//            Surface(
+//                color = Color.Transparent
+//            ) {
+////                ScrollingMaths()
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -244,10 +250,10 @@ fun Result(
                     Text(
                         "Loading game...",
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
-            }
+//            }
 
 
 

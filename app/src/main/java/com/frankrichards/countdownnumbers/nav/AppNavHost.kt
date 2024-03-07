@@ -10,6 +10,8 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,13 +23,14 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.frankrichards.countdownnumbers.components.ScrollingMaths
 import com.frankrichards.countdownnumbers.data.DataStoreManager
 import com.frankrichards.countdownnumbers.model.AppViewModel
 import com.frankrichards.countdownnumbers.screens.*
 import com.frankrichards.countdownnumbers.ui.theme.CountdownNumbersTheme
 import java.util.prefs.Preferences
 
-val ANIMATION_DURATION = 300
+const val ANIMATION_DURATION = 300
 
 val enterVertical =
     slideInVertically(
@@ -91,103 +94,109 @@ fun AppNavHost(
         darkTheme = darkMode
     ) {
 
-        NavHost(
-            modifier = modifier,
-            navController = navController,
-            startDestination = startDestination
+        Surface(
+           color = MaterialTheme.colorScheme.secondary
         ) {
-            val navigateTo: (String) -> Unit = {
-                navController.navigate(it) {
-                    popUpTo(NavigationItem.Menu.route)
-                    launchSingleTop = true
+            ScrollingMaths()
+            NavHost(
+                modifier = modifier,
+                navController = navController,
+                startDestination = startDestination
+            ) {
+                val navigateTo: (String) -> Unit = {
+                    navController.navigate(it) {
+                        popUpTo(NavigationItem.Menu.route)
+                        launchSingleTop = true
+                    }
                 }
-            }
 
-            // MENU
-            composable(
-                NavigationItem.Menu.route,
-                enterTransition = {
-                    when (this.initialState.destination.route) {
-                        NavigationItem.Settings.route -> enterVertical
-                        NavigationItem.Result.route -> popEnterVertical
-                        else -> enterHorizontal
+                // MENU
+                composable(
+                    NavigationItem.Menu.route,
+                    enterTransition = {
+                        when (this.initialState.destination.route) {
+                            NavigationItem.Settings.route -> enterVertical
+                            NavigationItem.Result.route -> popEnterVertical
+                            else -> enterHorizontal
+                        }
+                    },
+                    exitTransition = {
+                        when (this.targetState.destination.route) {
+                            NavigationItem.Settings.route -> exitVertical
+                            else -> exitHorizontal
+                        }
+                    },
+                    popEnterTransition = {
+                        when (this.initialState.destination.route) {
+                            NavigationItem.Settings.route -> popEnterVertical
+                            NavigationItem.Result.route -> enterVertical
+                            else -> popEnterHorizontal
+                        }
+                    },
+                    popExitTransition = {
+                        when (this.initialState.destination.route) {
+                            NavigationItem.Settings.route -> popExitVertical
+                            else -> popExitHorizontal
+                        }
                     }
-                },
-                exitTransition = {
-                    when (this.targetState.destination.route) {
-                        NavigationItem.Settings.route -> exitVertical
-                        else -> exitHorizontal
-                    }
-                },
-                popEnterTransition = {
-                    when (this.initialState.destination.route) {
-                        NavigationItem.Settings.route -> popEnterVertical
-                        NavigationItem.Result.route -> enterVertical
-                        else -> popEnterHorizontal
-                    }
-                },
-                popExitTransition = {
-                    when (this.initialState.destination.route) {
-                        NavigationItem.Settings.route -> popExitVertical
-                        else -> popExitHorizontal
-                    }
+                ) {
+                    MainMenu(navigateTo, viewModel)
                 }
-            ) {
-                MainMenu(navigateTo, viewModel)
-            }
 
-            // GAMEPLAY
-            composable(
-                NavigationItem.Gameplay.route,
-                enterTransition = {
-                    when(this.initialState.destination.route){
-                        NavigationItem.Result.route -> popEnterHorizontal
-                        else -> enterHorizontal
+                // GAMEPLAY
+                composable(
+                    NavigationItem.Gameplay.route,
+                    enterTransition = {
+                        when(this.initialState.destination.route){
+                            NavigationItem.Result.route -> popEnterHorizontal
+                            else -> enterHorizontal
+                        }
+                    },
+                    exitTransition = {
+                        exitHorizontal
+                    },
+                    popEnterTransition = {
+                        popEnterHorizontal
+                    },
+                    popExitTransition = {
+                        popExitHorizontal
                     }
-                },
-                exitTransition = {
-                    exitHorizontal
-                },
-                popEnterTransition = {
-                    popEnterHorizontal
-                },
-                popExitTransition = {
-                    popExitHorizontal
+                ) {
+                    Gameplay(navigateTo, viewModel)
                 }
-            ) {
-                Gameplay(navigateTo, viewModel)
-            }
 
-            // RESULT
-            composable(
-                NavigationItem.Result.route,
-                enterTransition = {
-                    enterHorizontal
-                },
-                exitTransition = {
-                    when(this.targetState.destination.route){
-                        NavigationItem.Menu.route -> exitVertical
-                        NavigationItem.Gameplay.route -> popExitHorizontal
-                        else -> null
+                // RESULT
+                composable(
+                    NavigationItem.Result.route,
+                    enterTransition = {
+                        enterHorizontal
+                    },
+                    exitTransition = {
+                        when(this.targetState.destination.route){
+                            NavigationItem.Menu.route -> exitVertical
+                            NavigationItem.Gameplay.route -> popExitHorizontal
+                            else -> null
+                        }
                     }
+                ) {
+                    Result(navigateTo, viewModel)
                 }
-            ) {
-                Result(navigateTo, viewModel)
-            }
-            composable(
-                NavigationItem.Settings.route,
-                enterTransition = {
-                    enterVertical
-                },
-                exitTransition = {
-                    exitVertical
-                },
-                popExitTransition = {
-                    popExitVertical
+                composable(
+                    NavigationItem.Settings.route,
+                    enterTransition = {
+                        enterVertical
+                    },
+                    exitTransition = {
+                        exitVertical
+                    },
+                    popExitTransition = {
+                        popExitVertical
+                    }
+                ) {
+                    Settings(navigateTo, viewModel)
                 }
-            ) {
-                Settings(navigateTo, viewModel)
             }
         }
+
     }
 }

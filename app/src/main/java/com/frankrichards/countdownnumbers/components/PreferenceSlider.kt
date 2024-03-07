@@ -73,7 +73,7 @@ fun PreferenceSlider(
 
         Text(
             title,
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.lightText,
             modifier = Modifier.padding(bottom = 32.dp)
         )

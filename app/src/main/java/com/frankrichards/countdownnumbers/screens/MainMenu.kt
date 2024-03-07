@@ -17,6 +17,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,8 +46,9 @@ fun MainMenu(
     navigateTo: (route: String) -> Unit,
     viewModel: AppViewModel = AppViewModel(DataStoreManager(LocalContext.current))
 ){
-    val scope = rememberCoroutineScope()
     var showButtons by remember { mutableStateOf(false) }
+    
+    val darkModeState by viewModel.settings.darkModeFlow.collectAsState(initial = false)
 
     LaunchedEffect(showButtons){
         delay(1500)
@@ -54,11 +56,8 @@ fun MainMenu(
     }
 
     Surface(
-        color = MaterialTheme.colorScheme.secondary
+        color = Color.Transparent
     ) {
-
-        ScrollingMaths()
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -67,7 +66,13 @@ fun MainMenu(
                 .padding(12.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.logo),
+                painter = painterResource(
+                    id = if(darkModeState){
+                        R.drawable.menu_logo_dark
+                    }else{
+                        R.drawable.menu_logo
+                    }
+                        ),
                 contentDescription = "Logo",
                 modifier = Modifier.weight(1f))
         }
@@ -78,7 +83,9 @@ fun MainMenu(
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Bottom),
-                modifier = Modifier.fillMaxSize().padding(8.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
             ){
                 CustomButton(
                     text = "PLAY",

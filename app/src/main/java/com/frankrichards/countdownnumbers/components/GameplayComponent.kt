@@ -44,7 +44,7 @@ fun GameplayComponent(
         .toTypedArray()
 
     Column(
-        modifier = modifier.background(MaterialTheme.colorScheme.surface),
+        modifier = modifier,//.background(MaterialTheme.colorScheme.surface),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         CalculationBox(

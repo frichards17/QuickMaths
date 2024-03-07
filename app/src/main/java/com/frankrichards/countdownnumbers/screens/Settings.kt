@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,14 +21,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.frankrichards.countdownnumbers.R
-import com.frankrichards.countdownnumbers.components.CustomIconButton
 import com.frankrichards.countdownnumbers.components.PreferenceSlider
-import com.frankrichards.countdownnumbers.components.ScrollingMaths
 import com.frankrichards.countdownnumbers.components.TogglePreference
 import com.frankrichards.countdownnumbers.data.DataStoreManager
 import com.frankrichards.countdownnumbers.model.AppViewModel
@@ -108,17 +104,14 @@ fun Settings(
 ){
     val difficultyStringState by viewModel.settings.difficultyFlow.collectAsState(initial = Difficulty.S_MEDIUM)
     val darkModeState by viewModel.settings.darkModeFlow.collectAsState(initial = false)
-    val SFXState by viewModel.settings.SFXFlow.collectAsState(initial = true)
+    val sfxState by viewModel.settings.SFXFlow.collectAsState(initial = true)
     val musicState by viewModel.settings.musicFlow.collectAsState(initial = true)
 
 
 
     Surface(
-        color = MaterialTheme.colorScheme.secondary
+        color = Color.Transparent
     ) {
-
-        ScrollingMaths()
-
         Column{
             IconButton(
                 onClick = { navigateTo(NavigationItem.Menu.route) },
@@ -186,7 +179,7 @@ fun Settings(
                         onButtonPress = {
                             viewModel.setSFX(it)
                         },
-                        isPrimarySelected = SFXState,
+                        isPrimarySelected = sfxState,
                         modifier = Modifier.weight(1f)
                     )
                     TogglePreference(

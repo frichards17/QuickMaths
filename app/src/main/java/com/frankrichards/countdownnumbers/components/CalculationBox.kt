@@ -65,7 +65,7 @@ fun CalculationBox(
     ) {
         Divider(
             thickness = 4.dp,
-            color = MaterialTheme.colorScheme.surfaceBorder,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
@@ -94,25 +94,25 @@ fun CalculationBox(
                     ) {
                         Text(
                             currentNum1.toString(),
-                            style = MaterialTheme.typography.titleLarge
+                            style = MaterialTheme.typography.titleMedium
                         )
 
                         if (currentOp != null) {
                             Text(
                                 currentOp.label,
-                                style = MaterialTheme.typography.titleLarge
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                         if (currentNum2 != null) {
                             Text(
                                 currentNum2.toString(),
-                                style = MaterialTheme.typography.titleLarge
+                                style = MaterialTheme.typography.titleMedium
                             )
                         }
                         if(calcError){
                             Text(
                                 "=?",
-                                style = MaterialTheme.typography.titleLarge,
+                                style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.error
                             )
                         }
