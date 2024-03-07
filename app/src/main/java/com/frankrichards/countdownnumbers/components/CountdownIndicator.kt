@@ -37,7 +37,7 @@ fun CountdownIndicator(
     color: Color = MaterialTheme.colorScheme.primary,
     textColor: Color = MaterialTheme.colorScheme.onBackground
 ) {
-    val progress by animateFloatAsState(countdown.toFloat() / max.toFloat(), label = "CountdownProgress", animationSpec = tween(durationMillis = 1000, easing = LinearEasing))
+    val progress by animateFloatAsState((countdown-1).toFloat() / (max-1).toFloat(), label = "CountdownProgress", animationSpec = tween(durationMillis = 1000, easing = LinearEasing))
     Column(
         modifier = Modifier.padding(vertical = 16.dp)
     ) {
@@ -45,7 +45,7 @@ fun CountdownIndicator(
         Box(
             modifier = Modifier
                 .height(10.dp)
-                .background(MaterialTheme.colorScheme.primary)
+                .background(color)
                 .fillMaxWidth(progress)
         )
 

@@ -103,62 +103,47 @@ fun AppNavHost(
                 }
             }
 
+            // MENU
             composable(
                 NavigationItem.Menu.route,
                 enterTransition = {
                     when (this.initialState.destination.route) {
-                        NavigationItem.Settings.route -> {
-                            enterVertical
-                        }
-
-                        else -> {
-                            enterHorizontal
-                        }
+                        NavigationItem.Settings.route -> enterVertical
+                        NavigationItem.Result.route -> popEnterVertical
+                        else -> enterHorizontal
                     }
-
                 },
                 exitTransition = {
-                    Log.d("ANIMATION TEST", "ROUTE: ${this.targetState.destination.route}")
                     when (this.targetState.destination.route) {
-                        NavigationItem.Settings.route -> {
-                            Log.d("ANIMATION TEST", "Target settings, exitVertical")
-                            exitVertical
-                        }
-
-                        else -> {
-                            exitHorizontal
-                        }
+                        NavigationItem.Settings.route -> exitVertical
+                        else -> exitHorizontal
                     }
                 },
                 popEnterTransition = {
                     when (this.initialState.destination.route) {
-                        NavigationItem.Settings.route -> {
-                            popEnterVertical
-                        }
-
-                        else -> {
-                            popEnterHorizontal
-                        }
+                        NavigationItem.Settings.route -> popEnterVertical
+                        NavigationItem.Result.route -> enterVertical
+                        else -> popEnterHorizontal
                     }
                 },
                 popExitTransition = {
                     when (this.initialState.destination.route) {
-                        NavigationItem.Settings.route -> {
-                            popExitVertical
-                        }
-
-                        else -> {
-                            popExitHorizontal
-                        }
+                        NavigationItem.Settings.route -> popExitVertical
+                        else -> popExitHorizontal
                     }
                 }
             ) {
                 MainMenu(navigateTo, viewModel)
             }
+
+            // GAMEPLAY
             composable(
                 NavigationItem.Gameplay.route,
                 enterTransition = {
-                    enterHorizontal
+                    when(this.initialState.destination.route){
+                        NavigationItem.Result.route -> popEnterHorizontal
+                        else -> enterHorizontal
+                    }
                 },
                 exitTransition = {
                     exitHorizontal
@@ -172,7 +157,21 @@ fun AppNavHost(
             ) {
                 Gameplay(navigateTo, viewModel)
             }
-            composable(NavigationItem.Result.route) {
+
+            // RESULT
+            composable(
+                NavigationItem.Result.route,
+                enterTransition = {
+                    enterHorizontal
+                },
+                exitTransition = {
+                    when(this.targetState.destination.route){
+                        NavigationItem.Menu.route -> exitVertical
+                        NavigationItem.Gameplay.route -> popExitHorizontal
+                        else -> null
+                    }
+                }
+            ) {
                 Result(navigateTo, viewModel)
             }
             composable(

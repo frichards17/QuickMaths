@@ -1,11 +1,14 @@
 package com.frankrichards.countdownnumbers.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -19,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -130,55 +134,72 @@ fun Settings(
         }
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(64.dp)
-        ){
-            Text(
-                "Settings",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.lightText
-            )
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .padding(32.dp)
+        ) {
 
-            DifficultySlider(
-                difficulty = Difficulty.getFromString(difficultyStringState) ?: Difficulty.MEDIUM,
-                sliderValueChanged = {
-                    viewModel.setDifficulty(it)
-                }
-            )
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                verticalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.CenterVertically),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.secondary,
+                        shape = RoundedCornerShape(32.dp)
+                    )
+                    .border(
+                        color = MaterialTheme.colorScheme.tertiary,
+                        width = 4.dp,
+                        shape = RoundedCornerShape((32.dp))
+                    )
+                    .padding(32.dp)
             ){
-                TogglePreference(
-                    title = "Theme",
-                    onButtonPress = {
-                        viewModel.setDarkMode(!it)
-                    },
-                    primaryButtonText = "LIGHT",
-                    secondaryButtonText = "DARK",
-                    isPrimarySelected = !darkModeState,
-                    modifier = Modifier.weight(1f)
+                Text(
+                    "Settings",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.lightText
                 )
-                TogglePreference(
-                    title = "SFX",
-                    onButtonPress = {
-                        viewModel.setSFX(it)
-                    },
-                    isPrimarySelected = SFXState,
-                    modifier = Modifier.weight(1f)
-                )
-                TogglePreference(
-                    title = "Music",
-                    onButtonPress = {
-                        viewModel.setMusic(it)
-                    },
-                    isPrimarySelected = musicState,
-                    modifier = Modifier.weight(1f)
-                )
-            }
 
+                DifficultySlider(
+                    difficulty = Difficulty.getFromString(difficultyStringState) ?: Difficulty.MEDIUM,
+                    sliderValueChanged = {
+                        viewModel.setDifficulty(it)
+                    }
+                )
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    TogglePreference(
+                        title = "Theme",
+                        onButtonPress = {
+                            viewModel.setDarkMode(!it)
+                        },
+                        primaryButtonText = "LIGHT",
+                        secondaryButtonText = "DARK",
+                        isPrimarySelected = !darkModeState,
+                        modifier = Modifier.weight(1f)
+                    )
+                    TogglePreference(
+                        title = "SFX",
+                        onButtonPress = {
+                            viewModel.setSFX(it)
+                        },
+                        isPrimarySelected = SFXState,
+                        modifier = Modifier.weight(1f)
+                    )
+                    TogglePreference(
+                        title = "Music",
+                        onButtonPress = {
+                            viewModel.setMusic(it)
+                        },
+                        isPrimarySelected = musicState,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+            }
         }
     }
 }

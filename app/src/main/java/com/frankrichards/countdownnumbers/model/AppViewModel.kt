@@ -16,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
@@ -56,7 +57,8 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
     var calculations by mutableStateOf(arrayOf<Calculation>())
     var calculationNumbers by mutableStateOf(arrayOf<CalculationNumber>())
     var calculationErrMsg by mutableStateOf("")
-    var timeLeft by mutableStateOf(30)
+    var maxTime by mutableStateOf(45)
+    var timeLeft by mutableStateOf(45)
     var showQuitDialog by mutableStateOf(false)
 
     // Result
@@ -72,7 +74,13 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
         selectedIndices = intArrayOf()
         selectedNumbers = intArrayOf()
         bestSolution = arrayOf()
-        timeLeft = 30
+        viewModelScope.launch {
+            settings.difficultyFlow.collect {
+                timeLeft = Difficulty.getFromString(it)?.seconds ?: 45
+                maxTime = timeLeft
+            }
+        }
+
         countdownJob = viewModelScope.launch(
             start = CoroutineStart.LAZY,
             block = countdownBlock
@@ -80,7 +88,6 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
         showQuitDialog = false
         reset()
     }
-
 
     //region GAME PROGRESS
     fun goToTargetGen(selectedNumbers: IntArray, targetNum: Int) {

@@ -129,7 +129,7 @@ fun Gameplay(
 
             CountdownIndicator(
                 countdown = viewModel.timeLeft,
-                max = 30
+                max = viewModel.maxTime
             )
 
             Row(
@@ -278,7 +278,7 @@ fun Gameplay(
                         }
                     }
 
-                    GameProgress.GameOver -> {
+                    GameProgress.GameOver, GameProgress.Result -> {
                         Column {
                             GameplayComponent(
                                 viewModel.calculationNumbers,

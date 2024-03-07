@@ -1,5 +1,11 @@
 package com.frankrichards.countdownnumbers.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +34,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,6 +42,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.frankrichards.countdownnumbers.components.Banner
 import com.frankrichards.countdownnumbers.components.CustomButton
 import com.frankrichards.countdownnumbers.components.CustomCard
+import com.frankrichards.countdownnumbers.components.ScrollingMaths
+import com.frankrichards.countdownnumbers.data.DataStoreManager
 import com.frankrichards.countdownnumbers.model.AppViewModel
 import com.frankrichards.countdownnumbers.model.Calculation
 import com.frankrichards.countdownnumbers.model.CalculationNumber
@@ -51,19 +60,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun Result(
     navigateTo: (route: String) -> Unit,
-    viewModel: AppViewModel
+    viewModel: AppViewModel,
+    playAgain: Boolean = false
 ) {
     val msg = if (viewModel.answerCorrect) "SOLUTION FOUND!" else "GAME OVER!"
 
     val listState = rememberLazyListState()
 
-    var playAgain by remember { mutableStateOf(false) }
+    var playAgain by remember { mutableStateOf(playAgain) }
 
-    LaunchedEffect(playAgain){
-        if(playAgain){
+    LaunchedEffect(playAgain) {
+        if (playAgain) {
             launch {
-                viewModel.resetGame()
                 delay(1500)
+                viewModel.resetGame()
                 navigateTo(NavigationItem.Gameplay.route)
             }
         }
@@ -74,20 +84,6 @@ fun Result(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        if(playAgain){
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize()
-            ){
-                Text(
-                    "Loading game...",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge,
-                )
-            }
-            return@Surface
-        }
 
         Column(
             modifier = Modifier.fillMaxHeight()
@@ -98,7 +94,12 @@ fun Result(
                 modifier = Modifier.padding(top = 32.dp)
             )
 
-            val topBottomFade = Brush.verticalGradient(0f to Color.Transparent, 0.05f to MaterialTheme.colorScheme.secondary, 0.95f to MaterialTheme.colorScheme.secondary, 1f to Color.Transparent)
+            val topBottomFade = Brush.verticalGradient(
+                0f to Color.Transparent,
+                0.05f to MaterialTheme.colorScheme.secondary,
+                0.95f to MaterialTheme.colorScheme.secondary,
+                1f to Color.Transparent
+            )
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -191,7 +192,7 @@ fun Result(
                         }
                     }
                 }
-                item{
+                item {
                     Box(
                         modifier = Modifier.height(32.dp)
                     )
@@ -203,7 +204,7 @@ fun Result(
                 verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Bottom),
                 modifier = Modifier
                     .padding(8.dp)
-//                    .weight(1f)
+                //                    .weight(1f)
             ) {
                 CustomButton(
                     text = "PLAY AGAIN",
@@ -222,6 +223,34 @@ fun Result(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+        }
+
+        AnimatedVisibility(
+            visible = playAgain,
+            enter = fadeIn(
+                animationSpec = tween(300)
+            )
+        ) {
+            Surface(
+                color = MaterialTheme.colorScheme.secondary
+            ) {
+                ScrollingMaths()
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Text(
+                        "Loading game...",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
+            }
+
+
+
         }
     }
 
@@ -251,7 +280,7 @@ fun Result_Preview() {
         ans = 3
     )
 
-    val v: AppViewModel = viewModel()
+    val v: AppViewModel = AppViewModel(DataStoreManager(LocalContext.current))
     v.answerCorrect = false
     v.targetNum = 12055
     v.calculations += c
@@ -273,10 +302,11 @@ fun Result_Preview() {
 @Composable
 fun Result_Preview2() {
 
-    val v: AppViewModel = viewModel()
+    val v: AppViewModel = AppViewModel(DataStoreManager(LocalContext.current))
     v.answerCorrect = true
 
+
     CountdownNumbersTheme {
-        Result({}, v)
+        Result({}, v, true)
     }
 }

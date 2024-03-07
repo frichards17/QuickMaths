@@ -78,7 +78,7 @@ fun MainMenu(
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Bottom),
-                modifier = Modifier.fillMaxSize().padding(8.dp)
+                modifier = Modifier.fillMaxSize().padding(8.dp),
             ){
                 CustomButton(
                     text = "PLAY",
