@@ -55,10 +55,10 @@ fun MenuButton_Preview(){
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, widthDp = 110)
 @Composable
 fun MenuButton_Preview2(){
     QuickMathsTheme {
-        CustomButton("Click Me", onClick = {}, enabled = false)
+        CustomButton("Dark", onClick = {}, enabled = false)
     }
 }

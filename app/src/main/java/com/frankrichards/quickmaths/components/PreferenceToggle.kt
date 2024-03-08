@@ -60,7 +60,7 @@ fun PreferenceToggle(
             text = secondaryButtonText,
             onClick = { onButtonPress(false) },
             textStyle = MaterialTheme.typography.buttonSmall,
-            textPadding = 2.dp,
+            textPadding = 0.dp,
             color = if(isPrimarySelected){
                 MaterialTheme.colorScheme.surface
             }else{

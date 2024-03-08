@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -119,7 +120,7 @@ fun Settings(
                 modifier = Modifier.padding(8.dp)
             ) {
                 Icon(
-                    Icons.Filled.ArrowBack,
+                    Icons.AutoMirrored.Filled.ArrowBack,
                     "Back Icon",
                     tint = MaterialTheme.colorScheme.lightText,
                     modifier = Modifier.size(32.dp)
@@ -146,7 +147,7 @@ fun Settings(
                         width = 4.dp,
                         shape = RoundedCornerShape((32.dp))
                     )
-                    .padding(32.dp)
+                    .padding(24.dp)
             ){
                 Text(
                     "Settings",

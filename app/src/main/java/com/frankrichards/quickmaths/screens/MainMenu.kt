@@ -44,7 +44,7 @@ fun MainMenu(
     val darkModeState by viewModel.settings.darkModeFlow.collectAsState(initial = false)
 
     LaunchedEffect(showButtons){
-        delay(1500)
+        delay(1000)
         showButtons = true
     }
 
