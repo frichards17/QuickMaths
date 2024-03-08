@@ -100,7 +100,7 @@ fun SelectableNumberCard_Preview() {
             1,
             displayNumber = { it.toString() },
             selected = false,
-            aspectRatio = 0.5f
+            aspectRatio = 1f
         )
     }
 }

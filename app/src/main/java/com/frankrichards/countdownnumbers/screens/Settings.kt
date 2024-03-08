@@ -23,10 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frankrichards.countdownnumbers.components.PreferenceSlider
-import com.frankrichards.countdownnumbers.components.TogglePreference
+import com.frankrichards.countdownnumbers.components.PreferenceToggle
 import com.frankrichards.countdownnumbers.data.DataStoreManager
 import com.frankrichards.countdownnumbers.model.AppViewModel
 import com.frankrichards.countdownnumbers.nav.NavigationItem
@@ -133,7 +134,7 @@ fun Settings(
         ) {
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.CenterVertically),
+                verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.CenterVertically),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .background(
@@ -164,7 +165,7 @@ fun Settings(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ){
-                    TogglePreference(
+                    PreferenceToggle(
                         title = "Theme",
                         onButtonPress = {
                             viewModel.setDarkMode(!it)
@@ -174,7 +175,7 @@ fun Settings(
                         isPrimarySelected = !darkModeState,
                         modifier = Modifier.weight(1f)
                     )
-                    TogglePreference(
+                    PreferenceToggle(
                         title = "SFX",
                         onButtonPress = {
                             viewModel.setSFX(it)
@@ -182,7 +183,7 @@ fun Settings(
                         isPrimarySelected = sfxState,
                         modifier = Modifier.weight(1f)
                     )
-                    TogglePreference(
+                    PreferenceToggle(
                         title = "Music",
                         onButtonPress = {
                             viewModel.setMusic(it)
@@ -197,7 +198,7 @@ fun Settings(
     }
 }
 
-@Preview(widthDp = 480, heightDp = 800)
+@Preview(device = Devices.PIXEL_3A)
 @Composable
 fun Settings_Preview(){
 

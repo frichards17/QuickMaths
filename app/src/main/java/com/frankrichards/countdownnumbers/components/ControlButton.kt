@@ -52,7 +52,7 @@ fun ControlButton(
                 style = TextStyle(
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp
+                    fontSize = 40.sp
                 )
             )
         }

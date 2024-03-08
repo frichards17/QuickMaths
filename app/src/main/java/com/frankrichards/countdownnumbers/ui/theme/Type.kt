@@ -20,12 +20,12 @@ val Typography = Typography(
     titleLarge = TextStyle(
         fontFamily = quicksand,
         fontWeight = FontWeight.Bold,
-        fontSize = 48.sp
+        fontSize = 40.sp
     ),
     titleMedium = TextStyle(
         fontFamily = quicksand,
         fontWeight = FontWeight.Bold,
-        fontSize = 32.sp
+        fontSize = 28.sp
     ),
     titleSmall = TextStyle(
         fontFamily = quicksand,
@@ -45,12 +45,12 @@ val Typography = Typography(
     labelLarge = TextStyle(
         fontFamily = quicksand,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp
+        fontSize = 18.sp
     ),
     labelSmall = TextStyle(
         fontFamily = quicksand,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 11.sp
+        fontSize = 14.sp
     )
 
 )
@@ -66,7 +66,7 @@ val Typography.buttonSmall: TextStyle
     get() = TextStyle(
         fontFamily = quicksand,
         fontWeight = FontWeight.Bold,
-        fontSize = 14.sp
+        fontSize = 12.sp
     )
 
 val Typography.targetNum: TextStyle

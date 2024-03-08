@@ -19,7 +19,7 @@ import com.frankrichards.countdownnumbers.ui.theme.buttonSmall
 import com.frankrichards.countdownnumbers.ui.theme.lightText
 
 @Composable
-fun TogglePreference(
+fun PreferenceToggle(
     title: String,
     onButtonPress: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -86,7 +86,7 @@ private fun TogglePreference_Preview() {
     }
 
     CountdownNumbersTheme {
-        TogglePreference(
+        PreferenceToggle(
             title = "Theme",
             onButtonPress = {
                 darkMode = !it
