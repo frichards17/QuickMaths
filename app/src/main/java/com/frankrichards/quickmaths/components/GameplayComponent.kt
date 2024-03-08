@@ -54,7 +54,7 @@ fun GameplayComponent(
             visible = !gameOver,
             exit = slideOutVertically(animationSpec = tween(2000)) { it }
         ){
-            ControlsAlt(
+            Controls(
                 nums = calculationNumbers,
                 operationClick = operationClick,
                 numberClick = numberClick,

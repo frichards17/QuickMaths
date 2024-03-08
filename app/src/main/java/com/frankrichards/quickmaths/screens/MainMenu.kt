@@ -43,6 +43,8 @@ fun MainMenu(
     
     val darkModeState by viewModel.settings.darkModeFlow.collectAsState(initial = false)
 
+    val context = LocalContext.current
+
     LaunchedEffect(showButtons){
         delay(1000)
         showButtons = true
@@ -83,6 +85,7 @@ fun MainMenu(
                 CustomButton(
                     text = "PLAY",
                     onClick = {
+                        viewModel.playClick(context)
                         viewModel.resetGame()
                         navigateTo(NavigationItem.Gameplay.route)
                     },
@@ -90,6 +93,7 @@ fun MainMenu(
                 CustomButton(
                     text = "SETTINGS",
                     onClick = {
+                        viewModel.playClick(context)
                         navigateTo(NavigationItem.Settings.route)
                     },
                     color = MaterialTheme.colorScheme.background,

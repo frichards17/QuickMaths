@@ -56,17 +56,22 @@ fun Gameplay(
     nums: IntArray = Utility.getCardNumbers()
 ) {
 
+    val context = LocalContext.current
+
     BackHandler {
+        viewModel.playPop(context)
         viewModel.showQuitDialog = true
     }
 
     if (viewModel.showQuitDialog) {
         QuitDialog(
             quit = {
+                viewModel.playClick(context)
                 navigateTo(NavigationItem.Menu.route)
                 viewModel.quitGame()
             },
             dismiss = {
+                viewModel.playClick(context)
                 viewModel.showQuitDialog = false
             }
         )
@@ -108,10 +113,9 @@ fun Gameplay(
             && (viewModel.bestSolution.isNotEmpty() ||
                     viewModel.answerCorrect)
         ) {
-            Log.v("ResultTest", "Launched effect progress: ${viewModel.gameProgress.name}")
-            Log.v("ResultTest", "Launched effect bestSolution: ${viewModel.bestSolution.count()}")
-            Log.v("ResultTest", "Launched effect answerCorrect: ${viewModel.answerCorrect}")
-            Log.v("ResultTest", "Launched effect navigating to result!")
+            if(viewModel.answerCorrect) {
+                viewModel.playCorrect(context)
+            }
             navigateTo(NavigationItem.Result.route)
         }
     }
@@ -123,15 +127,17 @@ fun Gameplay(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-            CountdownIndicator(
-                countdown = viewModel.timeLeft,
-                max = viewModel.maxTime
-            )
+            if (!viewModel.isInfinite) {
+                CountdownIndicator(
+                    countdown = viewModel.timeLeft,
+                    max = viewModel.maxTime
+                )
+            }
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(16.dp)
                     .weight(1f)
             ) {
 
@@ -175,6 +181,7 @@ fun Gameplay(
                             NumberCardLayout(
                                 numbers = nums,
                                 addNumber = {
+                                    viewModel.playClick(context)
                                     if (
                                         !viewModel.selectedIndices.contains(it)
                                         && viewModel.selectedIndices.size < 6
@@ -183,6 +190,7 @@ fun Gameplay(
                                     }
                                 },
                                 removeNumber = { i ->
+                                    viewModel.playClick(context)
                                     viewModel.selectedIndices =
                                         viewModel.selectedIndices.filter {
                                             it != i
@@ -196,6 +204,7 @@ fun Gameplay(
                                 CustomButton(
                                     text = "PLAY",
                                     onClick = {
+                                        viewModel.playClick(context)
                                         val selectedNums = viewModel.selectedIndices.map {
                                             nums[it]
                                         }.toIntArray()
@@ -259,9 +268,11 @@ fun Gameplay(
                             GameplayComponent(
                                 viewModel.calculationNumbers,
                                 numberClick = {
+                                    viewModel.playNumberClick(context)
                                     viewModel.numberClick(it)
                                 },
                                 operationClick = {
+                                    viewModel.playOperationClick(context)
                                     viewModel.controlButtonClick(it)
                                 },
                                 calculations = viewModel.calculations,
@@ -269,8 +280,14 @@ fun Gameplay(
                                 currentOp = viewModel.operation,
                                 currentNum2 = viewModel.num2?.value,
                                 calcError = viewModel.calcError,
-                                back = { viewModel.back() },
-                                reset = { viewModel.reset() },
+                                back = {
+                                    viewModel.playOperationClick(context)
+                                    viewModel.back()
+                                },
+                                reset = {
+                                    viewModel.playOperationClick(context)
+                                    viewModel.reset()
+                                },
                                 errorMsg = viewModel.calculationErrMsg,
                                 modifier = Modifier.fillMaxHeight(0.75f)
                             )
@@ -280,6 +297,7 @@ fun Gameplay(
                             CalculationDialog(
                                 calculation = viewModel.currentCalculation!!,
                                 onAnswer = {
+                                    viewModel.playNumberClick(context)
                                     viewModel.calculationAnswer(it)
                                 }
                             )

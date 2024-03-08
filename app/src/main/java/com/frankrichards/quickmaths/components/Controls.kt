@@ -22,55 +22,6 @@ import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
 
 @Composable
 fun Controls(
-    buttonClick: (Operation?) -> Unit,
-    modifier: Modifier = Modifier
-) {
-
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        ControlButton(
-            onClick = buttonClick,
-            operation = Operation.Add,
-            modifier = Modifier
-                .weight(1f)
-        )
-        ControlButton(
-            onClick = buttonClick,
-            operation = Operation.Subtract,
-            modifier = Modifier
-                .weight(1f)
-        )
-
-        ControlButton(
-            onClick = buttonClick,
-            operation = Operation.Multiply,
-            modifier = Modifier
-                .weight(1f)
-        )
-
-        ControlButton(
-            onClick = buttonClick,
-            operation = Operation.Divide,
-            modifier = Modifier
-                .weight(1f)
-        )
-
-        ControlButton(
-            label = "=",
-            onClick = buttonClick,
-            operation = null,
-            modifier = Modifier
-                .weight(1f)
-        )
-    }
-
-
-}
-
-@Composable
-fun ControlsAlt(
     nums: Array<CalculationNumber>,
     operationClick: (Operation?) -> Unit,
     numberClick: (CalculationNumber) -> Unit,
@@ -241,7 +192,7 @@ fun Controls_Preview() {
         )
     )
     QuickMathsTheme {
-        ControlsAlt(
+        Controls(
             nums = nums,
             operationClick = {},
             numberClick = {},

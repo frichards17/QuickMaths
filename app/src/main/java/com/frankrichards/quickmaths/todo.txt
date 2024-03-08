@@ -1,3 +1,5 @@
-- Make gameplay look good
-- Make numbers fit in boxes
+- Make gameplay look good (done??)
 - Music & SFX
+- Skip button
+- Auto select cards
+- Fix weird wiggly text size

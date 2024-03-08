@@ -1,5 +1,6 @@
 package com.frankrichards.quickmaths.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -35,25 +36,33 @@ import com.frankrichards.quickmaths.nav.NavigationItem
 import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
 import com.frankrichards.quickmaths.ui.theme.lightText
 
-class Difficulty(val id: Float, val label: String, val seconds: Int){
+class Difficulty(val id: Float, val label: String, val seconds: Int?) {
 
-    companion object{
+    companion object {
+        val INFINITE = Difficulty(0f, "Infinite", null)
         val EASY = Difficulty(1f, "Easy", 60)
         val MEDIUM = Difficulty(2f, "Medium", 45)
         val HARD = Difficulty(3f, "Hard", 30)
 
+        const val S_INFINITE = "infinite"
         const val S_EASY = "easy"
         const val S_MEDIUM = "medium"
         const val S_HARD = "hard"
 
-        fun getFromString(s: String): Difficulty?{
-            when(s.lowercase()){
+        fun getFromString(s: String): Difficulty? {
+            when (s.lowercase()) {
+                S_INFINITE -> {
+                    return INFINITE
+                }
+
                 S_EASY -> {
                     return EASY
                 }
+
                 S_MEDIUM -> {
                     return MEDIUM
                 }
+
                 S_HARD -> {
                     return HARD
                 }
@@ -61,14 +70,20 @@ class Difficulty(val id: Float, val label: String, val seconds: Int){
             return null
         }
 
-        fun getFromID(f: Float): Difficulty?{
-            when(f){
+        fun getFromID(f: Float): Difficulty? {
+            when (f) {
+                0f -> {
+                    return INFINITE
+                }
+
                 1f -> {
                     return EASY
                 }
+
                 2f -> {
                     return MEDIUM
                 }
+
                 3f -> {
                     return HARD
                 }
@@ -83,14 +98,14 @@ class Difficulty(val id: Float, val label: String, val seconds: Int){
 fun DifficultySlider(
     difficulty: Difficulty,
     sliderValueChanged: (Difficulty) -> Unit
-){
+) {
     PreferenceSlider(
         title = "Difficulty",
-        steps = 1,
+        steps = 2,
         value = difficulty.id,
-        valueRange = 1f..3f,
+        valueRange = 0f..3f,
         thumbLabel = difficulty.label,
-        thumbSubLabel = "${difficulty.seconds}s",
+        thumbSubLabel = if (difficulty.seconds != null) "${difficulty.seconds}s" else "",
         sliderValueChanged = { id ->
             Difficulty.getFromID(id)?.let {
                 sliderValueChanged(it)
@@ -103,20 +118,28 @@ fun DifficultySlider(
 fun Settings(
     navigateTo: (route: String) -> Unit,
     viewModel: AppViewModel
-){
+) {
     val difficultyStringState by viewModel.settings.difficultyFlow.collectAsState(initial = Difficulty.S_MEDIUM)
     val darkModeState by viewModel.settings.darkModeFlow.collectAsState(initial = false)
     val sfxState by viewModel.settings.SFXFlow.collectAsState(initial = true)
     val musicState by viewModel.settings.musicFlow.collectAsState(initial = true)
 
+    val context = LocalContext.current
 
+    BackHandler {
+        viewModel.playPop(context)
+        navigateTo(NavigationItem.Menu.route)
+    }
 
     Surface(
         color = Color.Transparent
     ) {
-        Column{
+        Column {
             IconButton(
-                onClick = { navigateTo(NavigationItem.Menu.route) },
+                onClick = {
+                    viewModel.playPop(context)
+                    navigateTo(NavigationItem.Menu.route)
+                },
                 modifier = Modifier.padding(8.dp)
             ) {
                 Icon(
@@ -135,7 +158,10 @@ fun Settings(
         ) {
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.CenterVertically),
+                verticalArrangement = Arrangement.spacedBy(
+                    16.dp,
+                    alignment = Alignment.CenterVertically
+                ),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .background(
@@ -148,7 +174,7 @@ fun Settings(
                         shape = RoundedCornerShape((32.dp))
                     )
                     .padding(24.dp)
-            ){
+            ) {
                 Text(
                     "Settings",
                     style = MaterialTheme.typography.titleLarge,
@@ -156,8 +182,10 @@ fun Settings(
                 )
 
                 DifficultySlider(
-                    difficulty = Difficulty.getFromString(difficultyStringState) ?: Difficulty.MEDIUM,
+                    difficulty = Difficulty.getFromString(difficultyStringState)
+                        ?: Difficulty.MEDIUM,
                     sliderValueChanged = {
+                        viewModel.playClick(context)
                         viewModel.setDifficulty(it)
                     }
                 )
@@ -165,10 +193,11 @@ fun Settings(
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
-                ){
+                ) {
                     PreferenceToggle(
                         title = "Theme",
                         onButtonPress = {
+                            viewModel.playClick(context)
                             viewModel.setDarkMode(!it)
                         },
                         primaryButtonText = "LIGHT",
@@ -179,6 +208,7 @@ fun Settings(
                     PreferenceToggle(
                         title = "SFX",
                         onButtonPress = {
+                            viewModel.playClick(context)
                             viewModel.setSFX(it)
                         },
                         isPrimarySelected = sfxState,
@@ -187,6 +217,7 @@ fun Settings(
                     PreferenceToggle(
                         title = "Music",
                         onButtonPress = {
+                            viewModel.playClick(context)
                             viewModel.setMusic(it)
                         },
                         isPrimarySelected = musicState,
@@ -201,7 +232,7 @@ fun Settings(
 
 @Preview(device = Devices.PIXEL_3A)
 @Composable
-fun Settings_Preview(){
+fun Settings_Preview() {
 
     QuickMathsTheme {
         Settings(

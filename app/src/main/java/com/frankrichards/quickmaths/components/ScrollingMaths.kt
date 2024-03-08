@@ -43,7 +43,6 @@ fun ScrollingMaths(
     val offsets by remember { mutableStateOf(Utility.getRandomOffsets(n)) }
     val calcs by remember { mutableStateOf(Utility.getRandomCalculations(n)) }
 
-    Log.v("ScrollingMaths", "Scrolling nums count ${n}")
     val xOffsets = remember {
         (0..<n).map {
             Animatable(-200f)
@@ -62,17 +61,6 @@ fun ScrollingMaths(
             )
         }
     }
-
-    val offset1 by infiniteTransition.animateValue(
-        initialValue = -100,
-        targetValue = screenWidth + 100,
-        typeConverter = Int.VectorConverter,
-        animationSpec = infiniteRepeatable(
-            tween(5000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "ScrollingMaths1"
-    )
 
     Column(
         verticalArrangement = Arrangement.SpaceAround,
@@ -123,25 +111,6 @@ fun ScrollingMaths(
                     )
             )
         }
-
-//        for(i in 0..<5){
-//            Text(
-//                calcs[i].toString(),
-//                color = textColor,
-//                style = MaterialTheme.typography.calculation,
-//                textAlign = TextAlign.Center,
-//                modifier = Modifier
-//                    .width(200.dp)
-//                    .offset(
-//                        x = if(i % 2 == 0){
-//                            offset1.dp - 100.dp
-//                        }else {
-//                            (screenWidth - offset1 - 100).dp
-//                        },
-//                        y = offsets[i]
-//                    )
-//            )
-//        }
     }
 }
 

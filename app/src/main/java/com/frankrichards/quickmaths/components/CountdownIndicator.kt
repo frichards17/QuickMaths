@@ -28,7 +28,7 @@ fun CountdownIndicator(
 ) {
     val progress by animateFloatAsState((countdown-1).toFloat() / (max-1).toFloat(), label = "CountdownProgress", animationSpec = tween(durationMillis = 1000, easing = LinearEasing))
     Column(
-        modifier = Modifier.padding(vertical = 16.dp)
+        modifier = Modifier.padding(vertical = 8.dp)
     ) {
         val text = if(countdown > 0) "${countdown}s" else "Game over!"
         Box(

@@ -65,6 +65,8 @@ fun Result(
 
     var playAgain by remember { mutableStateOf(playAgain) }
 
+    val context = LocalContext.current
+
     LaunchedEffect(playAgain) {
         if (playAgain) {
             launch {
@@ -210,6 +212,7 @@ fun Result(
                     CustomButton(
                         text = "PLAY AGAIN",
                         onClick = {
+                            viewModel.playClick(context)
                             playAgain = true
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -217,6 +220,7 @@ fun Result(
                     CustomButton(
                         text = "MAIN MENU",
                         onClick = {
+                            viewModel.playPop(context)
                             navigateTo(NavigationItem.Menu.route)
                         },
                         color = MaterialTheme.colorScheme.background,

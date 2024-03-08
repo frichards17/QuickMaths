@@ -15,6 +15,8 @@ fun QuitDialog(
     quit: () -> Unit,
     dismiss: () -> Unit
 ) {
+
+
     AlertDialog(
         title = {
             Text(text = "Quit Game")

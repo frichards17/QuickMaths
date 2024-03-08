@@ -1,5 +1,6 @@
 package com.frankrichards.quickmaths.model
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -9,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.frankrichards.quickmaths.data.DataStoreManager
 import com.frankrichards.quickmaths.screens.Difficulty
+import com.frankrichards.quickmaths.util.SFX
 import com.frankrichards.quickmaths.util.Utility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -57,12 +59,15 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
     var maxTime by mutableStateOf(45)
     var timeLeft by mutableStateOf(45)
     var showQuitDialog by mutableStateOf(false)
+    var isInfinite by mutableStateOf(false)
 
     // Result
     private var answerValid by mutableStateOf(false)
     var answerCorrect by mutableStateOf(false)
     var bestAnswer by mutableStateOf(0)
     var bestSolution by mutableStateOf(arrayOf<SimpleCalculation>())
+
+    var sfxOn by mutableStateOf(true)
 
     fun resetGame() {
         gameProgress = GameProgress.CardSelect
@@ -73,8 +78,22 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
         bestSolution = arrayOf()
         viewModelScope.launch {
             settings.difficultyFlow.collect {
-                timeLeft = Difficulty.getFromString(it)?.seconds ?: 45
-                maxTime = timeLeft
+                Log.d("DIFTEST", "Collecting difficulty $it")
+                if(it == Difficulty.S_INFINITE){
+                    Log.d("DIFTEST", "Is infinite true")
+                    isInfinite = true
+                    timeLeft = -1
+                    maxTime = -1
+                }else {
+                    timeLeft = Difficulty.getFromString(it)?.seconds ?: 45
+                    maxTime = timeLeft
+                }
+
+                Log.d("DIFTEST", "TimeLeft $timeLeft")
+            }
+
+            settings.SFXFlow.collect {
+                sfxOn = it
             }
         }
 
@@ -88,7 +107,6 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
 
     //region GAME PROGRESS
     fun goToTargetGen(selectedNumbers: IntArray, targetNum: Int) {
-
         calculationNumbers = getAvailableNumbers(selectedNumbers)
         this.selectedNumbers = selectedNumbers
         this.targetNum = targetNum
@@ -113,7 +131,9 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
     }
 
     private fun startCountdown() {
-        countdownJob.start()
+        if(!isInfinite){
+            countdownJob.start()
+        }
     }
 
     fun quitGame() {
@@ -302,7 +322,7 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
 
     fun setDifficulty(difficulty: Difficulty){
         viewModelScope.launch {
-            settings.storeDifficulty(difficulty.label)
+            settings.storeDifficulty(difficulty.label.lowercase())
         }
     }
 
@@ -313,6 +333,7 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
     }
 
     fun setSFX(b: Boolean){
+        sfxOn = b
         viewModelScope.launch {
             settings.storeSFX(b)
         }
@@ -320,6 +341,38 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
 
     //endregion
 
+    //region SOUND
+
+    fun playClick(context: Context){
+        viewModelScope.launch{
+            SFX.click(context, sfxOn)
+        }
+    }
+    fun playNumberClick(context: Context){
+        viewModelScope.launch {
+            SFX.numberClick(context, sfxOn)
+        }
+    }
+
+    fun playOperationClick(context: Context){
+        viewModelScope.launch {
+            SFX.buttonClick(context, sfxOn)
+        }
+    }
+
+    fun playCorrect(context: Context){
+        viewModelScope.launch {
+            SFX.correct(context, sfxOn)
+        }
+    }
+
+    fun playPop(context: Context){
+        viewModelScope.launch {
+            SFX.pop(context, sfxOn)
+        }
+    }
+
+    //endregion
 }
 
 // Remove given element from array
