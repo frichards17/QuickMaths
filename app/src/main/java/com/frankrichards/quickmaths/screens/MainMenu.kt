@@ -86,8 +86,7 @@ fun MainMenu(
                     text = "PLAY",
                     onClick = {
                         viewModel.playClick(context)
-                        viewModel.resetGame()
-                        navigateTo(NavigationItem.Gameplay.route)
+                        viewModel.startGame(navigateTo)
                     },
                 )
                 CustomButton(

@@ -18,15 +18,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
 import com.frankrichards.quickmaths.ui.theme.secondaryOnBackground
 
 @Composable
 fun CustomCard(
-    title: String,
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.surface,
+    title: String? = null,
+    color: Color = MaterialTheme.colorScheme.background,
+    padding: Dp = 8.dp,
     content: @Composable () -> Unit
 ) {
     ElevatedCard(
@@ -34,18 +36,21 @@ fun CustomCard(
         colors = CardDefaults.cardColors(containerColor = color)
     ) {
         Box(
-            modifier = Modifier.padding(8.dp)
         ) {
-            Text(
-                title,
-                color = MaterialTheme.colorScheme.secondaryOnBackground
-            )
+            if(title != null) {
+                Text(
+                    title,
+                    color = MaterialTheme.colorScheme.secondaryOnBackground,
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(padding)
             ) {
                 content()
             }
@@ -65,13 +70,15 @@ fun CustomCard_Preview() {
         ) {
             CustomCard(
                 title = "Target",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                padding = 8.dp
             ) {
 
             }
             CustomCard(
                 title = "Target",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                padding = 8.dp
             ) {
                 TargetNum(num = 312)
             }

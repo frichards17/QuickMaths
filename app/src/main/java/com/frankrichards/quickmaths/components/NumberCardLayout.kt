@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -48,17 +51,16 @@ fun NumberCardLayout(
         modifier = modifier
     ) {
         Box{
-            Box(
+            CustomCard(
                 modifier = Modifier
-                    .matchParentSize()
                     .padding(top = 16.dp)
-                    .shadow(10.dp)
-                    .background(MaterialTheme.colorScheme.background)
-            )
+                    .matchParentSize()
+            ){}
+
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(vertical = 4.dp, horizontal = 16.dp)
 
             ) {
                 numbers.slice(0..<4).forEachIndexed { i, number ->
@@ -93,7 +95,7 @@ fun NumberCardLayout(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(vertical = 4.dp, horizontal = 16.dp)
             ) {
                 numbers.slice(4..<10).forEachIndexed { i, number ->
                     val index = i + 4
@@ -128,7 +130,7 @@ fun NumberCardLayout(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(vertical = 4.dp, horizontal = 16.dp)
             ) {
                 numbers.slice(10..<17).forEachIndexed { i, number ->
                     val index = i + 10
@@ -162,7 +164,7 @@ fun NumberCardLayout(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(vertical = 4.dp, horizontal = 16.dp)
             ) {
                 numbers.slice(17..<24).forEachIndexed { i, number ->
                     val index = i + 17
@@ -186,13 +188,13 @@ fun NumberCardLayout(
 @Composable
 private fun NumberCardLayout_Preview() {
     QuickMathsTheme {
-        Surface{
-            NumberCardLayout(
-                numbers = Utility.getCardNumbers(),
-                addNumber = {},
-                removeNumber = {},
-                selectedCards = intArrayOf(0, 5, 11, 20)
-            )
-        }
+
+        NumberCardLayout(
+            numbers = Utility.getCardNumbers(),
+            addNumber = {},
+            removeNumber = {},
+            selectedCards = intArrayOf(0, 5, 11, 20)
+        )
+
     }
 }

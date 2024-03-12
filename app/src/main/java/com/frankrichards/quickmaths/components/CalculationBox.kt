@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,16 +55,11 @@ fun CalculationBox(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxSize()
     ) {
-        Divider(
-            thickness = 4.dp,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             state = listState,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).padding(top = 16.dp)
         ) {
 
             calculations.forEachIndexed { i, calculation ->

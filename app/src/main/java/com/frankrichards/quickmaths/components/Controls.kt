@@ -31,7 +31,6 @@ fun Controls(
     Column(
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.padding(8.dp)
     ) {
 
         // Calculation Numbers

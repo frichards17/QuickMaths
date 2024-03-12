@@ -1,7 +1,6 @@
 package com.frankrichards.quickmaths.screens
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.EaseOut
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -148,7 +148,8 @@ fun Gameplay(
                 CustomCard(
                     title = "Target:",
                     color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    padding = 24.dp
                 ) {
                     TargetNum(
                         num = "$animatedDigit1$animatedDigit2$animatedDigit3".toInt(),
@@ -160,7 +161,8 @@ fun Gameplay(
                 CustomCard(
                     title = "Answer:",
                     color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    padding = 24.dp
                 ) {
                     val answer = viewModel.calculations.lastOrNull()?.selectedSolution ?: "000"
                     Text(
@@ -181,7 +183,9 @@ fun Gameplay(
                 when (progress) {
                     GameProgress.CardSelect -> {
 
-                        Column {
+                        Column(
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        ) {
                             NumberCardLayout(
                                 numbers = nums,
                                 addNumber = {
@@ -237,7 +241,9 @@ fun Gameplay(
                     }
 
                     GameProgress.TargetGen -> {
-                        Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                        CustomCard(
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        ) {
                             GameplayComponent(
                                 modifier = Modifier
                                     .alpha(0.5f)
@@ -268,7 +274,9 @@ fun Gameplay(
                     }
 
                     GameProgress.Countdown -> {
-                        Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                        CustomCard(
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        ) {
                             GameplayComponent(
                                 viewModel.calculationNumbers,
                                 numberClick = {
@@ -309,7 +317,9 @@ fun Gameplay(
                     }
 
                     GameProgress.GameOver, GameProgress.Result -> {
-                        Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                        CustomCard(
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        ) {
                             GameplayComponent(
                                 viewModel.calculationNumbers,
                                 numberClick = {},
@@ -327,20 +337,11 @@ fun Gameplay(
                             )
                         }
                     }
-
-                    else -> {
-                        Text(
-                            "ELSE",
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
                 }
-
             }
-
-
         }
     }
+
 }
 
 fun Int.getDigit(index: Int): Int {
@@ -355,22 +356,22 @@ fun Int.getDigit(index: Int): Int {
 @Composable
 fun Gameplay_Preview() {
     val v: AppViewModel = AppViewModel(DataStoreManager(LocalContext.current))
-    v.goToTargetGen(
-        selectedNumbers = intArrayOf(100, 75, 8, 4, 2, 3),
-        targetNum = 312
-    )
-    v.gameProgress = GameProgress.GameOver
-    v.goToPlay()
-    val c = Calculation(
-        number1 = CalculationNumber(index = 0, value = 100),
-        operation = Operation.Add,
-        number2 = CalculationNumber(index = 1, value = 75)
-    )
-    c.selectedSolution = 175
-    v.calculations += c
-    v.calculationNumbers += CalculationNumber(index = 6, value = 175)
-    v.num1 = CalculationNumber(6, 100)
-    v.operation = Operation.Multiply
+//    v.goToTargetGen(
+//        selectedNumbers = intArrayOf(100, 75, 8, 4, 2, 3),
+//        targetNum = 312
+//    )
+//    v.gameProgress = GameProgress.GameOver
+//    v.goToPlay()
+//    val c = Calculation(
+//        number1 = CalculationNumber(index = 0, value = 100),
+//        operation = Operation.Add,
+//        number2 = CalculationNumber(index = 1, value = 75)
+//    )
+//    c.selectedSolution = 175
+//    v.calculations += c
+//    v.calculationNumbers += CalculationNumber(index = 6, value = 175)
+//    v.num1 = CalculationNumber(6, 100)
+//    v.operation = Operation.Multiply
     QuickMathsTheme {
         Gameplay({}, v)
     }

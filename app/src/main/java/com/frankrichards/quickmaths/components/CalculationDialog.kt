@@ -26,32 +26,41 @@ fun CalculationDialog(
     onAnswer: (Int) -> Unit
 ) {
     Dialog(onDismissRequest = {}) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(10.dp)
-        ) {
-            Column(
-                Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    calculation.getQuestion(),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+        CalculationCard(calculation = calculation, onAnswer = onAnswer)
+    }
+}
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    for(option in calculation.possibleSolutions!!){
-                        NumberCard(
-                            number = option,
-                            onClick = onAnswer,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
+@Composable
+fun CalculationCard(
+    calculation: Calculation,
+    onAnswer: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Column(
+            Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                calculation.getQuestion(),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                for(option in calculation.possibleSolutions!!){
+                    NumberCard(
+                        number = option,
+                        onClick = onAnswer,
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
         }

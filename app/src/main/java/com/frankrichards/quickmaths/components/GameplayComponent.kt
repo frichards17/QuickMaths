@@ -28,7 +28,7 @@ fun GameplayComponent(
     currentNum2: Int? = null,
     calcError: Boolean = false,
     errorMsg: String? = null,
-    gameOver: Boolean = false
+    gameOver: Boolean = false,
 ) {
     val selectedNums = calculationNumbers
         .slice(0..<6)
@@ -38,7 +38,7 @@ fun GameplayComponent(
         .toTypedArray()
 
     Column(
-        modifier = modifier,//.background(MaterialTheme.colorScheme.surface),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         CalculationBox(

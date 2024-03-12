@@ -165,11 +165,13 @@ fun Result(
                                 color = MaterialTheme.colorScheme.background,
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             ) {
-                                Column {
+                                Column(
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
                                     viewModel.calculations.forEach { calc ->
                                         Text(
                                             calc.toString(),
-                                            style = MaterialTheme.typography.calculation
+                                            style = MaterialTheme.typography.calculation,
                                         )
                                     }
                                 }
@@ -184,7 +186,9 @@ fun Result(
                                 color = MaterialTheme.colorScheme.background,
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             ) {
-                                Column {
+                                Column(
+                                    modifier = Modifier.padding(16.dp)
+                                ) {
                                     viewModel.bestSolution.forEach { calc ->
                                         Text(
                                             calc.toString(),

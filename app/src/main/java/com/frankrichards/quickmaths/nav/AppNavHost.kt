@@ -21,56 +21,7 @@ import com.frankrichards.quickmaths.data.DataStoreManager
 import com.frankrichards.quickmaths.model.AppViewModel
 import com.frankrichards.quickmaths.screens.*
 import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
-
-const val ANIMATION_DURATION = 300
-
-val enterVertical =
-    slideInVertically(
-        initialOffsetY = { it },
-        animationSpec = tween(durationMillis = ANIMATION_DURATION, easing = LinearOutSlowInEasing)
-    )
-
-val popEnterVertical =
-    slideInVertically(
-        initialOffsetY = { -it },
-        animationSpec = tween(durationMillis = ANIMATION_DURATION, easing = LinearOutSlowInEasing)
-    )
-
-val enterHorizontal =
-    slideInHorizontally(
-        initialOffsetX = { it },
-        animationSpec = tween(durationMillis = ANIMATION_DURATION, easing = LinearOutSlowInEasing)
-    )
-
-val popEnterHorizontal =
-    slideInHorizontally(
-        initialOffsetX = { -it },
-        animationSpec = tween(durationMillis = ANIMATION_DURATION, easing = LinearOutSlowInEasing)
-    )
-
-val exitVertical =
-    slideOutVertically(
-        targetOffsetY = { -it },
-        animationSpec = tween(durationMillis = ANIMATION_DURATION, easing = LinearOutSlowInEasing)
-    )
-
-val popExitVertical =
-    slideOutVertically(
-        targetOffsetY = { it },
-        animationSpec = tween(durationMillis = ANIMATION_DURATION, easing = LinearOutSlowInEasing)
-    )
-
-val exitHorizontal =
-    slideOutHorizontally(
-        targetOffsetX = { -it },
-        animationSpec = tween(durationMillis = ANIMATION_DURATION, easing = LinearOutSlowInEasing)
-    )
-
-val popExitHorizontal =
-    slideOutHorizontally(
-        targetOffsetX = { it },
-        animationSpec = tween(durationMillis = ANIMATION_DURATION, easing = LinearOutSlowInEasing)
-    )
+import com.frankrichards.quickmaths.util.Animation
 
 @Composable
 fun AppNavHost(
@@ -107,28 +58,28 @@ fun AppNavHost(
                     NavigationItem.Menu.route,
                     enterTransition = {
                         when (this.initialState.destination.route) {
-                            NavigationItem.Settings.route -> enterVertical
-                            NavigationItem.Result.route -> popEnterVertical
-                            else -> enterHorizontal
+                            NavigationItem.Settings.route -> Animation.enterVertical
+                            NavigationItem.Result.route -> Animation.popEnterVertical
+                            else -> Animation.enterHorizontal
                         }
                     },
                     exitTransition = {
                         when (this.targetState.destination.route) {
-                            NavigationItem.Settings.route -> exitVertical
-                            else -> exitHorizontal
+                            NavigationItem.Settings.route -> Animation.exitVertical
+                            else -> Animation.exitHorizontal
                         }
                     },
                     popEnterTransition = {
                         when (this.initialState.destination.route) {
-                            NavigationItem.Settings.route -> popEnterVertical
-                            NavigationItem.Result.route -> enterVertical
-                            else -> popEnterHorizontal
+                            NavigationItem.Settings.route -> Animation.popEnterVertical
+                            NavigationItem.Result.route -> Animation.enterVertical
+                            else -> Animation.popEnterHorizontal
                         }
                     },
                     popExitTransition = {
                         when (this.initialState.destination.route) {
-                            NavigationItem.Settings.route -> popExitVertical
-                            else -> popExitHorizontal
+                            NavigationItem.Settings.route -> Animation.popExitVertical
+                            else -> Animation.popExitHorizontal
                         }
                     }
                 ) {
@@ -140,18 +91,18 @@ fun AppNavHost(
                     NavigationItem.Gameplay.route,
                     enterTransition = {
                         when(this.initialState.destination.route){
-                            NavigationItem.Result.route -> popEnterHorizontal
-                            else -> enterHorizontal
+                            NavigationItem.Result.route -> Animation.popEnterHorizontal
+                            else -> Animation.enterHorizontal
                         }
                     },
                     exitTransition = {
-                        exitHorizontal
+                        Animation.exitHorizontal
                     },
                     popEnterTransition = {
-                        popEnterHorizontal
+                        Animation.popEnterHorizontal
                     },
                     popExitTransition = {
-                        popExitHorizontal
+                        Animation.popExitHorizontal
                     }
                 ) {
                     Gameplay(navigateTo, viewModel)
@@ -161,31 +112,52 @@ fun AppNavHost(
                 composable(
                     NavigationItem.Result.route,
                     enterTransition = {
-                        enterHorizontal
+                        Animation.enterHorizontal
                     },
                     exitTransition = {
                         when(this.targetState.destination.route){
-                            NavigationItem.Menu.route -> exitVertical
-                            NavigationItem.Gameplay.route -> popExitHorizontal
+                            NavigationItem.Menu.route -> Animation.exitVertical
+                            NavigationItem.Gameplay.route -> Animation.popExitHorizontal
                             else -> null
                         }
                     }
                 ) {
                     Result(navigateTo, viewModel)
                 }
+
+                // SETTINGS
                 composable(
                     NavigationItem.Settings.route,
                     enterTransition = {
-                        enterVertical
+                        Animation.enterVertical
                     },
                     exitTransition = {
-                        exitVertical
+                        Animation.exitVertical
                     },
                     popExitTransition = {
-                        popExitVertical
+                        Animation.popExitVertical
                     }
                 ) {
                     Settings(navigateTo, viewModel)
+                }
+
+                // TUTORIAL
+                composable(
+                    NavigationItem.Tutorial.route,
+                    enterTransition = {
+                        Animation.enterHorizontal
+                    },
+                    exitTransition = {
+                        Animation.exitHorizontal
+                    },
+                    popEnterTransition = {
+                        Animation.popEnterHorizontal
+                    },
+                    popExitTransition = {
+                        Animation.popExitHorizontal
+                    }
+                ) {
+                    Tutorial(navigateTo, appViewModel = viewModel)
                 }
             }
         }

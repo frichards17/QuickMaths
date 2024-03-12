@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.frankrichards.quickmaths.data.DataStoreManager
+import com.frankrichards.quickmaths.nav.NavigationItem
 import com.frankrichards.quickmaths.screens.Difficulty
 import com.frankrichards.quickmaths.util.SFX
 import com.frankrichards.quickmaths.util.Utility
@@ -67,6 +68,8 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
     var bestAnswer by mutableStateOf(0)
     var bestSolution by mutableStateOf(arrayOf<SimpleCalculation>())
 
+
+
     private var sfxOn by mutableStateOf(true)
 
     fun resetGame() {
@@ -99,6 +102,19 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
         )
         showQuitDialog = false
         reset()
+    }
+
+    fun startGame(navigateTo: (String) -> Unit){
+        viewModelScope.launch{
+            settings.viewedTutorialFlow.collect {viewed ->
+                if(viewed){
+                    resetGame()
+                    navigateTo(NavigationItem.Gameplay.route)
+                }else{
+                    navigateTo(NavigationItem.Tutorial.route)
+                }
+            }
+        }
     }
 
     //region GAME PROGRESS
@@ -337,6 +353,12 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
         sfxOn = b
         viewModelScope.launch {
             settings.storeSFX(b)
+        }
+    }
+
+    fun setTutorialViewed(b: Boolean){
+        viewModelScope.launch {
+            settings.storeViewedTutorial(b)
         }
     }
 

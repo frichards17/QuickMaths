@@ -21,6 +21,7 @@ class DataStoreManager(private val context: Context) {
         val DARK_MODE = booleanPreferencesKey("dark_mode")
         val MUSIC = booleanPreferencesKey("music")
         val SFX = booleanPreferencesKey("sfx")
+        val TUTORIAL = booleanPreferencesKey("tutorial")
     }
 
     //region DARK MODE
@@ -71,10 +72,16 @@ class DataStoreManager(private val context: Context) {
     }
     //endregion
 
+    //region TUTORIAL
+    suspend fun storeViewedTutorial(b: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[TUTORIAL] = b
+        }
+    }
 
+    val viewedTutorialFlow: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[TUTORIAL] ?: false
+    }
+    //endregion
 
 }
-
-data class Settings(
-    val timer: Int = 30
-)
