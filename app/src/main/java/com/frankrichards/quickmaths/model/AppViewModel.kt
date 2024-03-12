@@ -67,7 +67,7 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
     var bestAnswer by mutableStateOf(0)
     var bestSolution by mutableStateOf(arrayOf<SimpleCalculation>())
 
-    var sfxOn by mutableStateOf(true)
+    private var sfxOn by mutableStateOf(true)
 
     fun resetGame() {
         gameProgress = GameProgress.CardSelect
@@ -78,9 +78,7 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
         bestSolution = arrayOf()
         viewModelScope.launch {
             settings.difficultyFlow.collect {
-                Log.d("DIFTEST", "Collecting difficulty $it")
                 if(it == Difficulty.S_INFINITE){
-                    Log.d("DIFTEST", "Is infinite true")
                     isInfinite = true
                     timeLeft = -1
                     maxTime = -1
@@ -88,8 +86,6 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
                     timeLeft = Difficulty.getFromString(it)?.seconds ?: 45
                     maxTime = timeLeft
                 }
-
-                Log.d("DIFTEST", "TimeLeft $timeLeft")
             }
 
             settings.SFXFlow.collect {
@@ -260,6 +256,11 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
             num2 = c.number2
             currentCalculation = null
         }
+    }
+
+    fun skip(){
+        checkAnswer()
+        goToResult()
     }
     //endregion
 

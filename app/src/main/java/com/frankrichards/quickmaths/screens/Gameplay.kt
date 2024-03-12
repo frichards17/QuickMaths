@@ -42,6 +42,9 @@ import com.frankrichards.quickmaths.components.NumberCardLayout
 import com.frankrichards.quickmaths.components.QuitDialog
 import com.frankrichards.quickmaths.components.TargetNum
 import com.frankrichards.quickmaths.data.DataStoreManager
+import com.frankrichards.quickmaths.model.Calculation
+import com.frankrichards.quickmaths.model.CalculationNumber
+import com.frankrichards.quickmaths.model.Operation
 import com.frankrichards.quickmaths.nav.NavigationItem
 import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
 import com.frankrichards.quickmaths.ui.theme.targetNum
@@ -127,12 +130,13 @@ fun Gameplay(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-            if (!viewModel.isInfinite) {
-                CountdownIndicator(
-                    countdown = viewModel.timeLeft,
-                    max = viewModel.maxTime
-                )
-            }
+            CountdownIndicator(
+                countdown = viewModel.timeLeft,
+                max = viewModel.maxTime,
+                isInfinite = viewModel.isInfinite,
+                skip = { viewModel.skip() },
+                skipEnabled = viewModel.gameProgress == GameProgress.Countdown
+            )
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -351,22 +355,22 @@ fun Int.getDigit(index: Int): Int {
 @Composable
 fun Gameplay_Preview() {
     val v: AppViewModel = AppViewModel(DataStoreManager(LocalContext.current))
-//    v.goToTargetGen(
-//        selectedNumbers = intArrayOf(100, 75, 8, 4, 2, 3),
-//        targetNum = 312
-//    )
-//    v.gameProgress = GameProgress.GameOver
-//    v.goToPlay()
-//    val c = Calculation(
-//        number1 = CalculationNumber(index = 0, value = 100),
-//        operation = Operation.Add,
-//        number2 = CalculationNumber(index = 1, value = 75)
-//    )
-//    c.selectedSolution = 175
-//    v.calculations += c
-//    v.calculationNumbers += CalculationNumber(index = 6, value = 175)
-//    v.num1 = CalculationNumber(6, 100)
-//    v.operation = Operation.Multiply
+    v.goToTargetGen(
+        selectedNumbers = intArrayOf(100, 75, 8, 4, 2, 3),
+        targetNum = 312
+    )
+    v.gameProgress = GameProgress.GameOver
+    v.goToPlay()
+    val c = Calculation(
+        number1 = CalculationNumber(index = 0, value = 100),
+        operation = Operation.Add,
+        number2 = CalculationNumber(index = 1, value = 75)
+    )
+    c.selectedSolution = 175
+    v.calculations += c
+    v.calculationNumbers += CalculationNumber(index = 6, value = 175)
+    v.num1 = CalculationNumber(6, 100)
+    v.operation = Operation.Multiply
     QuickMathsTheme {
         Gameplay({}, v)
     }
