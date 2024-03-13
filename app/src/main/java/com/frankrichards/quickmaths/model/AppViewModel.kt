@@ -1,6 +1,5 @@
 package com.frankrichards.quickmaths.model
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -11,18 +10,22 @@ import androidx.lifecycle.viewModelScope
 import com.frankrichards.quickmaths.data.DataStoreManager
 import com.frankrichards.quickmaths.nav.NavigationItem
 import com.frankrichards.quickmaths.screens.Difficulty
-import com.frankrichards.quickmaths.util.SFX
+import com.frankrichards.quickmaths.util.SoundManager
 import com.frankrichards.quickmaths.util.Utility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.time.Duration.Companion.seconds
 
-class AppViewModel(val settings: DataStoreManager) : ViewModel() {
+class AppViewModel(
+    val settings: DataStoreManager,
+    private val soundManager: SoundManager
+) : ViewModel() {
 
     private var selectedNumbers by mutableStateOf(intArrayOf())
     var targetNum by mutableIntStateOf(0)
@@ -35,6 +38,8 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
     // Gameplay
     private var countdownBlock: suspend CoroutineScope.() -> Unit = {
         withContext(Dispatchers.Default) {
+            playCountdownTrack()
+            delay(100)
             while (timeLeft > 0) {
                 delay(1000)
                 timeLeft--
@@ -68,9 +73,37 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
     var bestAnswer by mutableStateOf(0)
     var bestSolution by mutableStateOf(arrayOf<SimpleCalculation>())
 
-
+    var helpClicked by mutableStateOf(false)
 
     private var sfxOn by mutableStateOf(true)
+    private var tutorial by mutableStateOf(false)
+
+    init {
+        viewModelScope.launch {
+            settings.difficultyFlow.collect {
+                if (it == Difficulty.S_INFINITE) {
+                    isInfinite = true
+                    timeLeft = -1
+                    maxTime = -1
+                } else {
+                    timeLeft = Difficulty.getFromString(it)?.seconds ?: 45
+                    maxTime = timeLeft
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            settings.SFXFlow.collect {
+                sfxOn = it
+            }
+        }
+
+        viewModelScope.launch {
+            settings.viewedTutorialFlow.collectLatest { viewed ->
+                tutorial = viewed
+            }
+        }
+    }
 
     fun resetGame() {
         gameProgress = GameProgress.CardSelect
@@ -79,41 +112,22 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
         selectedIndices = intArrayOf()
         selectedNumbers = intArrayOf()
         bestSolution = arrayOf()
-        viewModelScope.launch {
-            settings.difficultyFlow.collect {
-                if(it == Difficulty.S_INFINITE){
-                    isInfinite = true
-                    timeLeft = -1
-                    maxTime = -1
-                }else {
-                    timeLeft = Difficulty.getFromString(it)?.seconds ?: 45
-                    maxTime = timeLeft
-                }
-            }
-
-            settings.SFXFlow.collect {
-                sfxOn = it
-            }
-        }
 
         countdownJob = viewModelScope.launch(
             start = CoroutineStart.LAZY,
             block = countdownBlock
         )
         showQuitDialog = false
+        soundManager.resetCountdownMusic()
         reset()
     }
 
-    fun startGame(navigateTo: (String) -> Unit){
-        viewModelScope.launch{
-            settings.viewedTutorialFlow.collect {viewed ->
-                if(viewed){
-                    resetGame()
-                    navigateTo(NavigationItem.Gameplay.route)
-                }else{
-                    navigateTo(NavigationItem.Tutorial.route)
-                }
-            }
+    fun startGame(navigateTo: (String) -> Unit) {
+        if (tutorial) {
+            resetGame()
+            navigateTo(NavigationItem.Gameplay.route)
+        } else {
+            navigateTo(NavigationItem.Tutorial.route)
         }
     }
 
@@ -143,7 +157,7 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
     }
 
     private fun startCountdown() {
-        if(!isInfinite){
+        if (!isInfinite) {
             countdownJob.start()
         }
     }
@@ -174,12 +188,11 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
                 }
             }
             bestAnswer = best
-        }else{
+        } else {
             bestAnswer = targetNum
         }
         viewModelScope.launch {
             delay(3.seconds)
-            Log.v("ResultTest", "Delayed. Game Progress: ${gameProgress.name}")
             gameProgress = GameProgress.Result
         }
 
@@ -256,7 +269,8 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
         } else if (calculations.size > 1) {
             val c = calculations.last()
             calculations = calculations.slice(0..<calculations.lastIndex).toTypedArray()
-            calculationNumbers = calculationNumbers.slice(0..<calculationNumbers.lastIndex).toTypedArray()
+            calculationNumbers =
+                calculationNumbers.slice(0..<calculationNumbers.lastIndex).toTypedArray()
             num1 = c.number1
             operation = c.operation
             num2 = c.number2
@@ -274,7 +288,8 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
         }
     }
 
-    fun skip(){
+    fun skip() {
+        stopCountdownTrack()
         checkAnswer()
         goToResult()
     }
@@ -306,7 +321,7 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
 
     private fun checkAnswer() {
         answerCorrect = false
-        calculations.lastOrNull()?.let{
+        calculations.lastOrNull()?.let {
             answerCorrect = it.selectedSolution == targetNum
         }
 
@@ -331,32 +346,32 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
 
     //region SETTINGS
 
-    fun setDarkMode(b: Boolean){
+    fun setDarkMode(b: Boolean) {
         viewModelScope.launch {
             settings.storeDarkMode(b)
         }
     }
 
-    fun setDifficulty(difficulty: Difficulty){
+    fun setDifficulty(difficulty: Difficulty) {
         viewModelScope.launch {
             settings.storeDifficulty(difficulty.label.lowercase())
         }
     }
 
-    fun setMusic(b: Boolean){
+    fun setMusic(b: Boolean) {
         viewModelScope.launch {
             settings.storeMusic(b)
         }
     }
 
-    fun setSFX(b: Boolean){
+    fun setSFX(b: Boolean) {
         sfxOn = b
         viewModelScope.launch {
             settings.storeSFX(b)
         }
     }
 
-    fun setTutorialViewed(b: Boolean){
+    fun setTutorialViewed(b: Boolean) {
         viewModelScope.launch {
             settings.storeViewedTutorial(b)
         }
@@ -366,32 +381,34 @@ class AppViewModel(val settings: DataStoreManager) : ViewModel() {
 
     //region SOUND
 
-    fun playClick(context: Context){
-        viewModelScope.launch{
-            SFX.click(context, sfxOn)
-        }
-    }
-    fun playNumberClick(context: Context){
-        viewModelScope.launch {
-            SFX.numberClick(context, sfxOn)
-        }
+    fun playClick() {
+        soundManager.click(sfxOn)
     }
 
-    fun playOperationClick(context: Context){
-        viewModelScope.launch {
-            SFX.buttonClick(context, sfxOn)
-        }
+    fun playNumberClick() {
+        soundManager.numberClick(sfxOn)
     }
 
-    fun playCorrect(context: Context){
-        viewModelScope.launch {
-            SFX.correct(context, sfxOn)
-        }
+    fun playOperationClick() {
+        soundManager.buttonClick(sfxOn)
     }
 
-    fun playPop(context: Context){
+    fun playCorrect() {
+        soundManager.correct(sfxOn)
+    }
+
+    fun playPop() {
+        soundManager.pop(sfxOn)
+    }
+
+    fun playCountdownTrack() {
+        soundManager.startCountdown(maxTime)
+    }
+
+    fun stopCountdownTrack(completion: () -> Unit = {}) {
         viewModelScope.launch {
-            SFX.pop(context, sfxOn)
+            soundManager.stopCountdownMusic()
+            completion()
         }
     }
 

@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
 
@@ -24,7 +25,8 @@ fun SelectableNumberCard(
     addNumber: (Int) -> Unit = {},
     removeNumber: (Int) -> Unit = {},
     onClick: (Int) -> Unit = {},
-    aspectRatio: Float = 1f
+    aspectRatio: Float = 1f,
+    fontSize: TextUnit? = null
 ) {
 
     val topPadding by animateDpAsState(
@@ -80,7 +82,8 @@ fun SelectableNumberCard(
             }
         },
         displayNumber = displayNumber,
-        aspectRatio = aspectRatio
+        aspectRatio = aspectRatio,
+        fontSize = fontSize
     )
 
 }

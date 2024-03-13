@@ -50,6 +50,7 @@ import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
 import com.frankrichards.quickmaths.ui.theme.calculation
 import com.frankrichards.quickmaths.ui.theme.positive
 import com.frankrichards.quickmaths.ui.theme.targetNum
+import com.frankrichards.quickmaths.util.SoundManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -216,7 +217,7 @@ fun Result(
                     CustomButton(
                         text = "PLAY AGAIN",
                         onClick = {
-                            viewModel.playClick(context)
+                            viewModel.playClick()
                             playAgain = true
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -224,7 +225,7 @@ fun Result(
                     CustomButton(
                         text = "MAIN MENU",
                         onClick = {
-                            viewModel.playPop(context)
+                            viewModel.playPop()
                             navigateTo(NavigationItem.Menu.route)
                         },
                         color = MaterialTheme.colorScheme.background,
@@ -245,20 +246,19 @@ fun Result(
 //                color = Color.Transparent
 //            ) {
 ////                ScrollingMaths()
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    Text(
-                        "Loading game...",
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Text(
+                    "Loading game...",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
 //            }
-
 
 
         }
@@ -290,7 +290,10 @@ fun Result_Preview() {
         ans = 3
     )
 
-    val v: AppViewModel = AppViewModel(DataStoreManager(LocalContext.current))
+    val v: AppViewModel = AppViewModel(
+        DataStoreManager(LocalContext.current),
+        SoundManager(LocalContext.current)
+    )
     v.answerCorrect = false
     v.targetNum = 12055
     v.calculations += c
@@ -312,7 +315,10 @@ fun Result_Preview() {
 @Composable
 fun Result_Preview2() {
 
-    val v: AppViewModel = AppViewModel(DataStoreManager(LocalContext.current))
+    val v: AppViewModel = AppViewModel(
+        DataStoreManager(LocalContext.current),
+        SoundManager(LocalContext.current)
+    )
     v.answerCorrect = true
 
 

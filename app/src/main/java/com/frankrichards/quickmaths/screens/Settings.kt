@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +34,7 @@ import com.frankrichards.quickmaths.model.AppViewModel
 import com.frankrichards.quickmaths.nav.NavigationItem
 import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
 import com.frankrichards.quickmaths.ui.theme.lightText
+import com.frankrichards.quickmaths.util.SoundManager
 
 class Difficulty(val id: Float, val label: String, val seconds: Int?) {
 
@@ -124,10 +124,8 @@ fun Settings(
     val sfxState by viewModel.settings.SFXFlow.collectAsState(initial = true)
     val musicState by viewModel.settings.musicFlow.collectAsState(initial = true)
 
-    val context = LocalContext.current
-
     BackHandler {
-        viewModel.playPop(context)
+        viewModel.playPop()
         navigateTo(NavigationItem.Menu.route)
     }
 
@@ -137,7 +135,7 @@ fun Settings(
         Column {
             IconButton(
                 onClick = {
-                    viewModel.playPop(context)
+                    viewModel.playPop()
                     navigateTo(NavigationItem.Menu.route)
                 },
                 modifier = Modifier.padding(8.dp)
@@ -185,7 +183,7 @@ fun Settings(
                     difficulty = Difficulty.getFromString(difficultyStringState)
                         ?: Difficulty.MEDIUM,
                     sliderValueChanged = {
-                        viewModel.playClick(context)
+                        viewModel.playClick()
                         viewModel.setDifficulty(it)
                     }
                 )
@@ -197,7 +195,7 @@ fun Settings(
                     PreferenceToggle(
                         title = "Theme",
                         onButtonPress = {
-                            viewModel.playClick(context)
+                            viewModel.playClick()
                             viewModel.setDarkMode(!it)
                         },
                         primaryButtonText = "LIGHT",
@@ -208,7 +206,7 @@ fun Settings(
                     PreferenceToggle(
                         title = "SFX",
                         onButtonPress = {
-                            viewModel.playClick(context)
+                            viewModel.playClick()
                             viewModel.setSFX(it)
                         },
                         isPrimarySelected = sfxState,
@@ -217,7 +215,7 @@ fun Settings(
                     PreferenceToggle(
                         title = "Music",
                         onButtonPress = {
-                            viewModel.playClick(context)
+                            viewModel.playClick()
                             viewModel.setMusic(it)
                         },
                         isPrimarySelected = musicState,
@@ -240,7 +238,8 @@ fun Settings_Preview() {
             AppViewModel(
                 DataStoreManager(
                     LocalContext.current
-                )
+                ),
+                SoundManager(LocalContext.current)
             )
         )
     }

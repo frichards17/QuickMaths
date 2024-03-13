@@ -1,11 +1,6 @@
 package com.frankrichards.quickmaths.nav
 
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
+import android.util.Log
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -22,15 +17,20 @@ import com.frankrichards.quickmaths.model.AppViewModel
 import com.frankrichards.quickmaths.screens.*
 import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
 import com.frankrichards.quickmaths.util.Animation
+import com.frankrichards.quickmaths.util.SoundManager
 
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     startDestination: String = NavigationItem.Menu.route,
-    settings: DataStoreManager = DataStoreManager(LocalContext.current)
+    settings: DataStoreManager = DataStoreManager(LocalContext.current),
+    soundManager: SoundManager = SoundManager(LocalContext.current)
 ) {
-    val viewModel = AppViewModel(settings)
+    val viewModel = AppViewModel(
+        settings,
+        soundManager
+    )
     val darkMode by viewModel.settings.darkModeFlow.collectAsState(initial = false)
 
     QuickMathsTheme(
@@ -46,6 +46,7 @@ fun AppNavHost(
                 navController = navController,
                 startDestination = startDestination
             ) {
+
                 val navigateTo: (String) -> Unit = {
                     navController.navigate(it) {
                         popUpTo(NavigationItem.Menu.route)

@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
 import com.frankrichards.quickmaths.ui.theme.lightSurface
 import com.frankrichards.quickmaths.ui.theme.lightText
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SliderTicks(steps: Int) {
@@ -65,6 +68,9 @@ fun PreferenceSlider(
     thumbSubLabel: String? = null
     ){
 
+    var debounced by remember { mutableStateOf(false) }
+    var scope = rememberCoroutineScope()
+
     Column(
         modifier = modifier.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -84,7 +90,16 @@ fun PreferenceSlider(
             SliderTicks(steps)
             Slider(
                 value = value,
-                onValueChange = sliderValueChanged,
+                onValueChange = {
+                    scope.launch {
+                        if(!debounced) {
+                            sliderValueChanged(it)
+                            debounced = true
+                            delay(100)
+                            debounced = false
+                        }
+                    }
+                },
                 steps = steps,
                 valueRange = valueRange,
                 colors = SliderDefaults.colors(

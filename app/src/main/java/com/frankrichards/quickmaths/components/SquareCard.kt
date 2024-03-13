@@ -67,10 +67,10 @@ fun SquareCard(
         Surface(
             modifier =
             modifier
-                .aspectRatio(aspectRatio)
-                .clip(RoundedCornerShape(10.dp)),
+                .aspectRatio(aspectRatio),
             color = color,
-            onClick = onClick
+            onClick = onClick,
+            shape = RoundedCornerShape(10.dp)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,

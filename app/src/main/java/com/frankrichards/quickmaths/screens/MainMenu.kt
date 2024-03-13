@@ -7,9 +7,13 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -27,27 +31,42 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.frankrichards.quickmaths.R
+import com.frankrichards.quickmaths.components.AboutDialog
 import com.frankrichards.quickmaths.components.CustomButton
 import com.frankrichards.quickmaths.data.DataStoreManager
 import com.frankrichards.quickmaths.model.AppViewModel
 import com.frankrichards.quickmaths.nav.NavigationItem
 import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
+import com.frankrichards.quickmaths.ui.theme.lightText
+import com.frankrichards.quickmaths.util.SoundManager
 import kotlinx.coroutines.delay
 
 @Composable
 fun MainMenu(
     navigateTo: (route: String) -> Unit,
-    viewModel: AppViewModel = AppViewModel(DataStoreManager(LocalContext.current))
-){
+    viewModel: AppViewModel = AppViewModel(
+        DataStoreManager(LocalContext.current),
+        SoundManager(LocalContext.current)
+    )
+) {
     var showButtons by remember { mutableStateOf(false) }
-    
+
     val darkModeState by viewModel.settings.darkModeFlow.collectAsState(initial = false)
 
-    val context = LocalContext.current
+    var showAboutDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(showButtons){
+    LaunchedEffect(showButtons) {
         delay(1000)
         showButtons = true
+    }
+
+    if(showAboutDialog){
+        AboutDialog(
+            onDismissRequest = {
+                viewModel.playPop()
+                showAboutDialog = false
+            }
+        )
     }
 
     Surface(
@@ -62,14 +81,15 @@ fun MainMenu(
         ) {
             Image(
                 painter = painterResource(
-                    id = if(darkModeState){
+                    id = if (darkModeState) {
                         R.drawable.menu_logo_dark
-                    }else{
+                    } else {
                         R.drawable.menu_logo
                     }
-                        ),
+                ),
                 contentDescription = "Logo",
-                modifier = Modifier.weight(1f))
+                modifier = Modifier.weight(1f)
+            )
         }
 
         AnimatedVisibility(
@@ -81,18 +101,18 @@ fun MainMenu(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(8.dp),
-            ){
+            ) {
                 CustomButton(
                     text = "PLAY",
                     onClick = {
-                        viewModel.playClick(context)
+                        viewModel.playClick()
                         viewModel.startGame(navigateTo)
                     },
                 )
                 CustomButton(
                     text = "SETTINGS",
                     onClick = {
-                        viewModel.playClick(context)
+                        viewModel.playClick()
                         navigateTo(NavigationItem.Settings.route)
                     },
                     color = MaterialTheme.colorScheme.background,
@@ -100,6 +120,44 @@ fun MainMenu(
                 )
             }
         }
+
+        Row(
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy((-16).dp, alignment = Alignment.End),
+            modifier = Modifier.fillMaxHeight()
+        ) {
+            IconButton(
+                onClick = {
+                    viewModel.playClick()
+                    viewModel.helpClicked = true
+                    navigateTo(NavigationItem.Tutorial.route)
+                },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.help),
+                    "Back Icon",
+                    tint = MaterialTheme.colorScheme.lightText,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+            IconButton(
+                onClick = {
+                    viewModel.playClick()
+                    showAboutDialog = true
+                },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.info),
+                    "Back Icon",
+                    tint = MaterialTheme.colorScheme.lightText,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        }
+
+
     }
 }
 
@@ -107,7 +165,7 @@ fun MainMenu(
 @Preview(widthDp = 480, heightDp = 800)
 
 @Composable
-fun MainMenu_Preview(){
+fun MainMenu_Preview() {
     QuickMathsTheme {
         MainMenu({})
     }

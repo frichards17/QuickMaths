@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
 import com.frankrichards.quickmaths.util.Utility
 
@@ -60,8 +61,7 @@ fun NumberCardLayout(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .padding(vertical = 4.dp, horizontal = 16.dp)
-
+                    .padding(vertical = 4.dp, horizontal = 32.dp)
             ) {
                 numbers.slice(0..<4).forEachIndexed { i, number ->
                     SelectableNumberCard(
@@ -73,6 +73,7 @@ fun NumberCardLayout(
                         selected = selectedCards.contains(i),
                         modifier = Modifier
                             .weight(1f),
+                        fontSize = 32.sp
                     )
                 }
             }
@@ -95,7 +96,7 @@ fun NumberCardLayout(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .padding(vertical = 4.dp, horizontal = 16.dp)
+                    .padding(vertical = 4.dp, horizontal = 8.dp)
             ) {
                 numbers.slice(4..<10).forEachIndexed { i, number ->
                     val index = i + 4
@@ -107,7 +108,8 @@ fun NumberCardLayout(
                         displayNumber = displayNumber,
                         selected = selectedCards.contains(index),
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(1f),
+                        fontSize = 24.sp
                     )
                 }
             }
@@ -130,7 +132,7 @@ fun NumberCardLayout(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .padding(vertical = 4.dp, horizontal = 16.dp)
+                    .padding(vertical = 4.dp, horizontal = 8.dp)
             ) {
                 numbers.slice(10..<17).forEachIndexed { i, number ->
                     val index = i + 10
@@ -142,7 +144,8 @@ fun NumberCardLayout(
                         displayNumber = displayNumber,
                         selected = selectedCards.contains(index),
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(1f),
+                        fontSize = 24.sp
                     )
                 }
             }
@@ -164,7 +167,7 @@ fun NumberCardLayout(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
-                    .padding(vertical = 4.dp, horizontal = 16.dp)
+                    .padding(vertical = 4.dp, horizontal = 8.dp)
             ) {
                 numbers.slice(17..<24).forEachIndexed { i, number ->
                     val index = i + 17
@@ -176,7 +179,8 @@ fun NumberCardLayout(
                         displayNumber = displayNumber,
                         selected = selectedCards.contains(index),
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(1f),
+                        fontSize = 24.sp
                     )
                 }
             }

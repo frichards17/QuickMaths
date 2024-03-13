@@ -9,14 +9,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,12 +40,10 @@ import com.frankrichards.quickmaths.components.NumberCardLayout
 import com.frankrichards.quickmaths.components.QuitDialog
 import com.frankrichards.quickmaths.components.TargetNum
 import com.frankrichards.quickmaths.data.DataStoreManager
-import com.frankrichards.quickmaths.model.Calculation
-import com.frankrichards.quickmaths.model.CalculationNumber
-import com.frankrichards.quickmaths.model.Operation
 import com.frankrichards.quickmaths.nav.NavigationItem
 import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
 import com.frankrichards.quickmaths.ui.theme.targetNum
+import com.frankrichards.quickmaths.util.SoundManager
 import com.frankrichards.quickmaths.util.Utility
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -62,19 +58,20 @@ fun Gameplay(
     val context = LocalContext.current
 
     BackHandler {
-        viewModel.playPop(context)
+        viewModel.playPop()
         viewModel.showQuitDialog = true
     }
 
     if (viewModel.showQuitDialog) {
         QuitDialog(
             quit = {
-                viewModel.playClick(context)
+                viewModel.stopCountdownTrack()
+                viewModel.playClick()
                 navigateTo(NavigationItem.Menu.route)
                 viewModel.quitGame()
             },
             dismiss = {
-                viewModel.playClick(context)
+                viewModel.playClick()
                 viewModel.showQuitDialog = false
             }
         )
@@ -117,7 +114,7 @@ fun Gameplay(
                     viewModel.answerCorrect)
         ) {
             if(viewModel.answerCorrect) {
-                viewModel.playCorrect(context)
+                viewModel.playCorrect()
             }
             navigateTo(NavigationItem.Result.route)
         }
@@ -189,7 +186,7 @@ fun Gameplay(
                             NumberCardLayout(
                                 numbers = nums,
                                 addNumber = {
-                                    viewModel.playClick(context)
+                                    viewModel.playClick()
                                     if (
                                         !viewModel.selectedIndices.contains(it)
                                         && viewModel.selectedIndices.size < 6
@@ -198,7 +195,7 @@ fun Gameplay(
                                     }
                                 },
                                 removeNumber = { i ->
-                                    viewModel.playClick(context)
+                                    viewModel.playClick()
                                     viewModel.selectedIndices =
                                         viewModel.selectedIndices.filter {
                                             it != i
@@ -212,7 +209,7 @@ fun Gameplay(
                                 CustomButton(
                                     text = "PLAY",
                                     onClick = {
-                                        viewModel.playClick(context)
+                                        viewModel.playClick()
                                         val selectedNums = viewModel.selectedIndices.map {
                                             nums[it]
                                         }.toIntArray()
@@ -280,11 +277,11 @@ fun Gameplay(
                             GameplayComponent(
                                 viewModel.calculationNumbers,
                                 numberClick = {
-                                    viewModel.playNumberClick(context)
+                                    viewModel.playNumberClick()
                                     viewModel.numberClick(it)
                                 },
                                 operationClick = {
-                                    viewModel.playOperationClick(context)
+                                    viewModel.playOperationClick()
                                     viewModel.controlButtonClick(it)
                                 },
                                 calculations = viewModel.calculations,
@@ -293,11 +290,11 @@ fun Gameplay(
                                 currentNum2 = viewModel.num2?.value,
                                 calcError = viewModel.calcError,
                                 back = {
-                                    viewModel.playOperationClick(context)
+                                    viewModel.playOperationClick()
                                     viewModel.back()
                                 },
                                 reset = {
-                                    viewModel.playOperationClick(context)
+                                    viewModel.playOperationClick()
                                     viewModel.reset()
                                 },
                                 errorMsg = viewModel.calculationErrMsg,
@@ -309,7 +306,7 @@ fun Gameplay(
                             CalculationDialog(
                                 calculation = viewModel.currentCalculation!!,
                                 onAnswer = {
-                                    viewModel.playNumberClick(context)
+                                    viewModel.playNumberClick()
                                     viewModel.calculationAnswer(it)
                                 }
                             )
@@ -355,7 +352,10 @@ fun Int.getDigit(index: Int): Int {
 @Preview(widthDp = 480, heightDp = 800, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun Gameplay_Preview() {
-    val v: AppViewModel = AppViewModel(DataStoreManager(LocalContext.current))
+    val v: AppViewModel = AppViewModel(
+        DataStoreManager(LocalContext.current),
+        SoundManager(LocalContext.current)
+    )
 //    v.goToTargetGen(
 //        selectedNumbers = intArrayOf(100, 75, 8, 4, 2, 3),
 //        targetNum = 312

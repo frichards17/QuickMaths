@@ -68,7 +68,6 @@ class Calculation(val number1: CalculationNumber, val operation: Operation, val 
                 actualSolution = actualSolution
             )
             val result = calculate(dividend, number2.value)
-            Log.v("Calculate:Divide", "Dividend: $dividend, Num2: ${number2.value}, Result: $result")
             if(result != null && !nums.contains(result)){
                 nums += result
             }
@@ -86,7 +85,6 @@ class Calculation(val number1: CalculationNumber, val operation: Operation, val 
         }
 
         val near = (lower..n+variance).toIntArray().filter { it != n }.random()
-        Log.v("Calculate:Variance", "N: $n, Variance: $variance, Near: $near")
         return near
     }
 
