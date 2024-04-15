@@ -19,11 +19,14 @@ import androidx.compose.ui.window.Dialog
 import com.frankrichards.quickmaths.R
 import com.frankrichards.quickmaths.ui.theme.QuickMathsTheme
 import com.frankrichards.quickmaths.ui.theme.lightText
+import com.frankrichards.quickmaths.BuildConfig
+import java.util.Calendar
 
 @Composable
 fun AboutDialog(
-    modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit
+    darkMode: Boolean,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -41,20 +44,23 @@ fun AboutDialog(
             ) {
                 Image(
                     painter = painterResource(
-                        id = R.drawable.menu_logo
-
+                        id = if(darkMode){
+                            R.drawable.menu_logo_dark
+                        } else {
+                            R.drawable.menu_logo
+                        }
                     ),
                     contentDescription = "Logo",
                     modifier = Modifier//.padding(bottom = 16.dp)
                 )
                 Text(
-                    "Version 1.0.0",
+                    "Version ${BuildConfig.VERSION_NAME}",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.lightText,
                     modifier = Modifier.padding(vertical = 16.dp)
                 )
                 Text(
-                    "© 2024, Frank Richards",
+                    "© ${Calendar.getInstance().get(Calendar.YEAR)}, Frank Richards",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.lightText,
                     modifier = Modifier.padding(bottom = 4.dp)
@@ -73,7 +79,7 @@ fun AboutDialog(
 @Composable
 private fun AboutDialog_Preview() {
     QuickMathsTheme {
-        AboutDialog(onDismissRequest = {})
+        AboutDialog(true, onDismissRequest = {})
 
     }
 }

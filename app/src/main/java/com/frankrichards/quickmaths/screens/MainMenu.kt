@@ -5,17 +5,24 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,14 +32,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.frankrichards.quickmaths.R
 import com.frankrichards.quickmaths.components.AboutDialog
 import com.frankrichards.quickmaths.components.CustomButton
+import com.frankrichards.quickmaths.components.TextIconButton
 import com.frankrichards.quickmaths.data.DataStoreManager
 import com.frankrichards.quickmaths.model.AppViewModel
 import com.frankrichards.quickmaths.nav.NavigationItem
@@ -60,8 +73,9 @@ fun MainMenu(
         showButtons = true
     }
 
-    if(showAboutDialog){
+    if (showAboutDialog) {
         AboutDialog(
+            darkMode = darkModeState,
             onDismissRequest = {
                 viewModel.playPop()
                 showAboutDialog = false
@@ -123,38 +137,25 @@ fun MainMenu(
 
         Row(
             verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.spacedBy((-16).dp, alignment = Alignment.End),
+            horizontalArrangement = Arrangement.spacedBy((-24).dp, alignment = Alignment.End),
             modifier = Modifier.fillMaxHeight()
         ) {
-            IconButton(
+            TextIconButton(
+                text = "i",
+                onClick = {
+                    viewModel.playClick()
+                    showAboutDialog = true
+                }
+            )
+
+            TextIconButton(
+                text = "?",
                 onClick = {
                     viewModel.playClick()
                     viewModel.helpClicked = true
                     navigateTo(NavigationItem.Tutorial.route)
-                },
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.help),
-                    "Back Icon",
-                    tint = MaterialTheme.colorScheme.lightText,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-            IconButton(
-                onClick = {
-                    viewModel.playClick()
-                    showAboutDialog = true
-                },
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.info),
-                    "Back Icon",
-                    tint = MaterialTheme.colorScheme.lightText,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
+                }
+            )
         }
 
 

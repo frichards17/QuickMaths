@@ -35,6 +35,9 @@ class AppViewModel(
     var selectedIndices by mutableStateOf(intArrayOf())
     var displayedTargetNum by mutableIntStateOf(0)
 
+    // Game start countdown
+    var gameStartCountdown by mutableIntStateOf(5)
+
     // Gameplay
     private var countdownBlock: suspend CoroutineScope.() -> Unit = {
         withContext(Dispatchers.Default) {
@@ -138,6 +141,10 @@ class AppViewModel(
         this.targetNum = targetNum
         gameProgress = GameProgress.TargetGen
 
+    }
+
+    fun gameStartCountdown(n: Int){
+        gameStartCountdown = n
     }
 
     private fun getAvailableNumbers(selectedNumbers: IntArray): Array<CalculationNumber> {
@@ -411,6 +418,14 @@ class AppViewModel(
 
     fun playPop() {
         soundManager.pop(sfxOn)
+    }
+
+    fun playBeepLow() {
+        soundManager.beepLow(sfxOn)
+    }
+
+    fun playBeepHigh() {
+        soundManager.beepHigh(sfxOn)
     }
 
     private fun playCountdownTrack() {

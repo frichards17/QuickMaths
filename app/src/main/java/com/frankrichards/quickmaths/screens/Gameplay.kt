@@ -1,7 +1,6 @@
 package com.frankrichards.quickmaths.screens
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.EaseOut
@@ -21,14 +20,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -229,7 +226,15 @@ fun Gameplay(
                                         )
 
                                         scope.launch {
-                                            delay(5000)
+                                            delay(1000)
+                                            for(i in arrayOf(5, 4, 3, 2, 1)){
+                                                viewModel.gameStartCountdown(i)
+                                                viewModel.playBeepLow()
+                                                delay(1000)
+                                            }
+                                            viewModel.gameStartCountdown(0)
+                                            viewModel.playBeepHigh()
+                                            delay(500)
                                             viewModel.goToPlay()
                                         }
 
@@ -267,12 +272,20 @@ fun Gameplay(
                             modifier = Modifier.fillMaxHeight(0.75f)
                         ) {
                             Text(
-                                "Starting game...",
+                                "Starting game in...",
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(32.dp)
+                            )
+                            Text(
+                                viewModel.gameStartCountdown.toString(),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+//                                    .padding(32.dp)
                             )
                         }
 

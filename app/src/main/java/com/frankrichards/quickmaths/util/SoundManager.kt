@@ -18,6 +18,8 @@ class SoundManager(private val context: Context) {
     private var buttonClick = soundPool.load(context, R.raw.click2, 1)
     private var correct = soundPool.load(context, R.raw.correct, 1)
     private var pop = soundPool.load(context, R.raw.pop, 1)
+    private var beepLow = soundPool.load(context, R.raw.beep_low, 1)
+    private var beepHigh = soundPool.load(context, R.raw.beep_high, 1)
 
     private var countdownTrack = MediaPlayer.create(context, R.raw.countdown_track)
 
@@ -58,6 +60,14 @@ class SoundManager(private val context: Context) {
 
     fun pop(sfxOn: Boolean = true){
         if(sfxOn) soundPool.play(pop)
+    }
+
+    fun beepLow(sfxOn: Boolean = true){
+        if(sfxOn) soundPool.play(beepLow)
+    }
+
+    fun beepHigh(sfxOn: Boolean = true){
+        if(sfxOn) soundPool.play(beepHigh)
     }
 
     suspend fun stopCountdownMusic(){
