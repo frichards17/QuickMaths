@@ -7,10 +7,10 @@ import android.media.VolumeShaper
 import com.frankrichards.quickmaths.R
 import kotlinx.coroutines.delay
 
-class SoundManager(private val context: Context) {
+private const val TIMER_45: Int = 15000
+private const val TIMER_30: Int = 30000
 
-    private val TIMER_45: Int = 15000
-    private val TIMER_30: Int = 30000
+class SoundManager(private val context: Context) {
 
     private var soundPool: SoundPool = SoundPool.Builder().setMaxStreams(3).build()
     private var click = soundPool.load(context, R.raw.click3, 1)
@@ -20,6 +20,8 @@ class SoundManager(private val context: Context) {
     private var pop = soundPool.load(context, R.raw.pop, 1)
 
     private var countdownTrack = MediaPlayer.create(context, R.raw.countdown_track)
+
+    private var countdownLoop = MediaPlayer.create(context, R.raw.countdown_track_loop)
 
     private var fadeInConfig = VolumeShaper.Configuration.Builder()
         .setDuration(3000)
@@ -32,7 +34,7 @@ class SoundManager(private val context: Context) {
         .setCurve(floatArrayOf(0f, 1f), floatArrayOf(1f, 0f))
         .setInterpolatorType(VolumeShaper.Configuration.INTERPOLATOR_TYPE_LINEAR)
         .build()
-
+    
     private var shaper = countdownTrack.createVolumeShaper(fadeInConfig)
 
     private fun SoundPool.play(id: Int){
@@ -60,10 +62,18 @@ class SoundManager(private val context: Context) {
 
     suspend fun stopCountdownMusic(){
         shaper.close()
-        shaper = countdownTrack.createVolumeShaper(fadeOutConfig)
+        shaper = if(countdownTrack.isPlaying) {
+            countdownTrack.createVolumeShaper(fadeOutConfig)
+        } else if(countdownLoop.isPlaying) {
+            countdownLoop.createVolumeShaper(fadeOutConfig)
+        } else {
+            return
+        }
+
         shaper.apply(VolumeShaper.Operation.PLAY)
         delay(1500)
         countdownTrack.stop()
+        countdownLoop.stop()
     }
 
     fun resetCountdownMusic(){
@@ -84,6 +94,11 @@ class SoundManager(private val context: Context) {
             shaper.apply(VolumeShaper.Operation.PLAY)
         }
         countdownTrack.start()
+    }
+
+    fun startLoopedCountdown(){
+        countdownLoop.isLooping = true
+        countdownLoop.start()
     }
 
 }

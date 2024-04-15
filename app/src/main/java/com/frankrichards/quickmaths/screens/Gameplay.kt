@@ -20,15 +20,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import com.frankrichards.quickmaths.components.CalculationDialog
 import com.frankrichards.quickmaths.components.CountdownIndicator
 import com.frankrichards.quickmaths.model.AppViewModel
@@ -60,6 +64,12 @@ fun Gameplay(
     BackHandler {
         viewModel.playPop()
         viewModel.showQuitDialog = true
+    }
+
+    val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateFlow.collectAsState()
+
+    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) {
+        viewModel.quitGame()
     }
 
     if (viewModel.showQuitDialog) {

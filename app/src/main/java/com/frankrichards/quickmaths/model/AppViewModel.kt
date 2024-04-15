@@ -38,7 +38,6 @@ class AppViewModel(
     // Gameplay
     private var countdownBlock: suspend CoroutineScope.() -> Unit = {
         withContext(Dispatchers.Default) {
-            playCountdownTrack()
             delay(100)
             while (timeLeft > 0) {
                 delay(1000)
@@ -160,6 +159,7 @@ class AppViewModel(
         if (!isInfinite) {
             countdownJob.start()
         }
+        playCountdownTrack()
     }
 
     fun quitGame() {
@@ -401,8 +401,14 @@ class AppViewModel(
         soundManager.pop(sfxOn)
     }
 
-    fun playCountdownTrack() {
-        soundManager.startCountdown(maxTime)
+    private fun playCountdownTrack() {
+        Log.d("MusicTest", "PlayTrack")
+        if(isInfinite){
+            Log.d("MusicTest", "StartLoopedCountdown()")
+            soundManager.startLoopedCountdown()
+        }else{
+            soundManager.startCountdown(maxTime)
+        }
     }
 
     fun stopCountdownTrack(completion: () -> Unit = {}) {
