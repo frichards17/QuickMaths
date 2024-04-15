@@ -75,25 +75,25 @@ class AppViewModel(
     var helpClicked by mutableStateOf(false)
 
     private var sfxOn by mutableStateOf(true)
+    private var musicOn by mutableStateOf(true)
     private var tutorial by mutableStateOf(false)
 
     init {
         viewModelScope.launch {
             settings.difficultyFlow.collect {
-                if (it == Difficulty.S_INFINITE) {
-                    isInfinite = true
-                    timeLeft = -1
-                    maxTime = -1
-                } else {
-                    timeLeft = Difficulty.getFromString(it)?.seconds ?: 45
-                    maxTime = timeLeft
-                }
+                updateGameDifficulty(Difficulty.getFromString(it) ?: Difficulty.MEDIUM)
             }
         }
 
         viewModelScope.launch {
             settings.SFXFlow.collect {
                 sfxOn = it
+            }
+        }
+
+        viewModelScope.launch {
+            settings.musicFlow.collect {
+                musicOn = it
             }
         }
 
@@ -111,6 +111,7 @@ class AppViewModel(
         selectedIndices = intArrayOf()
         selectedNumbers = intArrayOf()
         bestSolution = arrayOf()
+        timeLeft = maxTime
 
         countdownJob = viewModelScope.launch(
             start = CoroutineStart.LAZY,
@@ -312,6 +313,9 @@ class AppViewModel(
             checkAnswer()
 
             if (answerValid) {
+                if(isInfinite){
+                    stopCountdownTrack()
+                }
                 goToResult()
             } else {
                 calculationErrMsg = "One of your calculations is wrong!"
@@ -354,8 +358,16 @@ class AppViewModel(
 
     fun setDifficulty(difficulty: Difficulty) {
         viewModelScope.launch {
+            Log.d("SettingsTest", "Setting difficulty ${difficulty.label}")
             settings.storeDifficulty(difficulty.label.lowercase())
+            updateGameDifficulty(difficulty)
         }
+    }
+
+    fun updateGameDifficulty(difficulty: Difficulty) {
+        isInfinite = difficulty == Difficulty.INFINITE
+        maxTime = difficulty.seconds ?: -1
+        timeLeft = difficulty.seconds ?: -1
     }
 
     fun setMusic(b: Boolean) {
@@ -403,12 +415,7 @@ class AppViewModel(
 
     private fun playCountdownTrack() {
         Log.d("MusicTest", "PlayTrack")
-        if(isInfinite){
-            Log.d("MusicTest", "StartLoopedCountdown()")
-            soundManager.startLoopedCountdown()
-        }else{
-            soundManager.startCountdown(maxTime)
-        }
+        soundManager.startMusic(musicOn, isInfinite, maxTime)
     }
 
     fun stopCountdownTrack(completion: () -> Unit = {}) {

@@ -91,6 +91,7 @@ fun Tutorial(
                 text = buttonText,
                 modifier = Modifier.padding(horizontal = 16.dp),
                 onClick = {
+                    appViewModel.playClick()
                     viewModel.next()
                 }
             )

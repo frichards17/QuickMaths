@@ -1,6 +1,7 @@
 package com.frankrichards.quickmaths.screens
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.EaseOut
@@ -59,16 +60,13 @@ fun Gameplay(
     nums: IntArray = Utility.getCardNumbers()
 ) {
 
-    val context = LocalContext.current
-
     BackHandler {
         viewModel.playPop()
         viewModel.showQuitDialog = true
     }
 
-    val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateFlow.collectAsState()
-
-    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) {
+    LifecycleEventEffect(event = Lifecycle.Event.ON_STOP) {
+        navigateTo(NavigationItem.Menu.route)
         viewModel.quitGame()
     }
 

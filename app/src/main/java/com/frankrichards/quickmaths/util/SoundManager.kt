@@ -77,26 +77,36 @@ class SoundManager(private val context: Context) {
     }
 
     fun resetCountdownMusic(){
-        if(countdownTrack.isPlaying) {
-            countdownTrack.reset()
-        }
+        countdownTrack.release()
+        countdownLoop.release()
+
         countdownTrack = MediaPlayer.create(context, R.raw.countdown_track)
+        countdownLoop = MediaPlayer.create(context, R.raw.countdown_track_loop)
         shaper.close()
         shaper = countdownTrack.createVolumeShaper(fadeInConfig)
     }
 
-    fun startCountdown(timer: Int){
+    fun startMusic(musicOn: Boolean, infinite: Boolean, timer: Int? = null){
+        if(!musicOn) { return }
+        if(infinite){
+            startLoopedCountdown()
+        } else {
+            startCountdown(timer ?: 60)
+        }
+    }
+
+    private fun startCountdown(timer: Int){
         when(timer){
             45 -> countdownTrack.seekTo(TIMER_45)
             30 -> countdownTrack.seekTo(TIMER_30)
         }
-        if(timer < 60){
-            shaper.apply(VolumeShaper.Operation.PLAY)
-        }
         countdownTrack.start()
+//        if(timer < 60){
+            shaper.apply(VolumeShaper.Operation.PLAY)
+//        }
     }
 
-    fun startLoopedCountdown(){
+    private fun startLoopedCountdown(){
         countdownLoop.isLooping = true
         countdownLoop.start()
     }

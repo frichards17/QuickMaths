@@ -1,3 +1,5 @@
 - Music & SFX
 - Auto select cards
-- quit game crash?
+- music setting turns off music
+- stop music (+ gameplay?) when app is in background
+- add countdown to start of game
