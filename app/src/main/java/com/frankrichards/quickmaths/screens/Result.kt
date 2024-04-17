@@ -61,6 +61,7 @@ fun Result(
     playAgain: Boolean = false
 ) {
     val msg = if (viewModel.answerCorrect) "SOLUTION FOUND!" else "GAME OVER!"
+    val answerLabel = if(viewModel.answerCorrect) "Answer:" else "Best Answer:"
 
     val listState = rememberLazyListState()
 
@@ -133,7 +134,7 @@ fun Result(
                             }
 
                             CustomCard(
-                                title = "Answer:",
+                                title = answerLabel,
                                 color = MaterialTheme.colorScheme.background,
                                 modifier = Modifier.weight(1f)
                             ) {
