@@ -1,5 +1,6 @@
 package com.frankrichards.quickmaths.components
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -42,7 +42,11 @@ fun Controls(
         ) {
 
             if(nums.count() > 6) {
-                for (num in nums.slice(6..nums.lastIndex)) {
+                // Ensure index is no larger than 9
+                // Don't render the last number, it can't be used for anything and more than 9 looks bad
+                val maxIndex = minOf(nums.lastIndex, 9)
+                Log.d("ControlsTest", "index: $maxIndex")
+                for (num in nums.slice(6..maxIndex)) {
                     if (num.isAvailable) {
                         
                         NumberCard(

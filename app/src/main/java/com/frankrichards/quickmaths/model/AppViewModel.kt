@@ -320,9 +320,7 @@ class AppViewModel(
             checkAnswer()
 
             if (answerValid) {
-                if(isInfinite){
-                    stopCountdownTrack()
-                }
+                stopCountdownTrack()
                 goToResult()
             } else {
                 calculationErrMsg = "One of your calculations is wrong!"
