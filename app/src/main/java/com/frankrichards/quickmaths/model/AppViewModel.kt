@@ -36,7 +36,7 @@ class AppViewModel(
     var displayedTargetNum by mutableIntStateOf(0)
 
     // Game start countdown
-    var gameStartCountdown by mutableIntStateOf(5)
+    var gameStartCountdown by mutableStateOf("")
 
     // Gameplay
     private var countdownBlock: suspend CoroutineScope.() -> Unit = {
@@ -143,7 +143,7 @@ class AppViewModel(
 
     }
 
-    fun gameStartCountdown(n: Int){
+    fun gameStartCountdown(n: String){
         gameStartCountdown = n
     }
 

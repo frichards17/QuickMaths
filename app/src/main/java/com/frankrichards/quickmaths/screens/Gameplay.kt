@@ -228,11 +228,11 @@ fun Gameplay(
                                         scope.launch {
                                             delay(1000)
                                             for(i in arrayOf(5, 4, 3, 2, 1)){
-                                                viewModel.gameStartCountdown(i)
+                                                viewModel.gameStartCountdown(i.toString())
                                                 viewModel.playBeepLow()
                                                 delay(1000)
                                             }
-                                            viewModel.gameStartCountdown(0)
+                                            viewModel.gameStartCountdown("")
                                             viewModel.playBeepHigh()
                                             delay(500)
                                             viewModel.goToPlay()
