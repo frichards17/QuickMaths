@@ -101,7 +101,7 @@ object Utility {
     }
 
     // Get best solution starting with a given number
-    private suspend fun solveForNum(
+    private fun solveForNum(
         target: Int,
         currentNum: Int,
         otherNums: IntArray,

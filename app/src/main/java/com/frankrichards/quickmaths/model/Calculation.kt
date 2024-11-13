@@ -104,8 +104,6 @@ class Calculation(val number1: CalculationNumber, val operation: Operation, val 
         return "${number1.value} ${operation.label} ${number2.value} = ?"
     }
 
-
-
 }
 
 class SimpleCalculation(val n1: Int, val op: Operation, val n2: Int, val ans: Int){

@@ -48,7 +48,7 @@ interface Operation {
             return if(x.mod(y) == 0){
                 x / y
             } else {
-                Log.v("Calculate", "Divide Null")
+//                Log.v("Calculate", "Divide Null")
                 null
             }
 
